@@ -23,7 +23,7 @@ def seed_db():
             admin_user = Usuario(
                 username='admin',
                 email='admin@cooperativa.com',
-                password_hash=bcrypt.generate_password_hash('admin123').decode('utf-8'),
+                password_hash=bcrypt.generate_password_hash('admin').decode('utf-8'),
                 nombre_completo='Administrador Principal',
                 rol_id=r_admin.id
             )
