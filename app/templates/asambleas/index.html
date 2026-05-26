@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Asambleas - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="fa-solid fa-calendar-check text-success me-2"></i>Gestión de Asambleas</h2>
+    <a href="#" class="btn btn-success"><i class="fa-solid fa-plus me-1"></i>Nueva Asamblea</a>
+</div>
+
+<div class="row g-4">
+    {% for asamblea in asambleas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0 transition-hover">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between">
+                <span class="badge bg-primary text-uppercase">{{ asamblea.tipo }}</span>
+                <span class="text-muted small"><i class="fa-solid fa-calendar-day me-1"></i>{{ asamblea.fecha }}</span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Asamblea {{ asamblea.tipo|capitalize }}</h5>
+                <p class="text-muted small mb-1"><i class="fa-solid fa-location-dot me-2"></i>{{ asamblea.lugar or 'Sin definir' }}</p>
+                <p class="text-muted small mb-3"><i class="fa-solid fa-clock me-2"></i>{{ asamblea.hora_inicio or '--:--' }}</p>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <span class="me-2 text-muted small">Estado:</span>
+                    {% if asamblea.estado == 'programada' %}
+                        <span class="badge bg-info text-dark">Programada</span>
+                    {% elif asamblea.estado == 'en_curso' %}
+                        <span class="badge bg-success">En Curso</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ asamblea.estado|capitalize }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer bg-light border-0 d-flex justify-content-between">
+                <a href="{{ url_for('asambleas.padron', id=asamblea.id) }}" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-users-viewfinder me-1"></i>Padrón</a>
+                <a href="#" class="btn btn-sm btn-outline-warning"><i class="fa-solid fa-check-to-slot me-1"></i>Mociones</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info text-center py-4">
+            No hay asambleas registradas.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.transition-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.transition-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
+{% endblock %}

@@ -1,64 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGACOOP - Gestión de Asambleas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>{% block title %}Mi Voto 2.0{% end প্রতিশোধ %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- HTMX para interactividad sin recargar -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+        .htmx-request.htmx-indicator { display: inline-block; }
+    </style>
+    {% block extra_css %}{% endblock %}
 </head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'>
 
-<body>
-    {% if current_user.is_authenticated %}
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <h2>SIGACOOP</h2>
-            <span class="badge-rol">{{ current_user.rol | replace('_', ' ') | title }}</span>
+    {% include 'navbar.html' %}
+
+    <div class="container mt-4">
+        <!-- Contenedor para mensajes flash -->
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
         </div>
-        <ul class="nav-menu">
-            <li><a href="{{ url_for('dashboard.index') }}">📊 Dashboard</a></li>
 
-            {% if current_user.rol in ['administrador'] %}
-            <li class="nav-section">Gestión</li>
-            <li><a href="{{ url_for('socios.listar') }}">👥 Socios</a></li>
-            <li><a href="{{ url_for('cuotas.listar') }}">💰 Cuotas</a></li>
-            <li><a href="{{ url_for('asambleas.listar') }}">📋 Asambleas</a></li>
-            <li><a href="{{ url_for('habilitaciones.validar') }}">✅ Habilitaciones</a></li>
-            {% endif %}
+        <!-- Contenido dinámico -->
+        <main id="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
-            {% if current_user.rol in ['administrador', 'operador_acreditacion'] %}
-            <li class="nav-section">Operaciones</li>
-            <li class="nav-critical"><a href="{{ url_for('acreditaciones.puerta') }}">🚪 ACREDITACIÓN</a></li>
-            {% endif %}
-
-            {% if current_user.rol in ['administrador', 'auditor', 'directivo'] %}
-            <li class="nav-section">Consultas</li>
-            <li><a href="{{ url_for('reportes.index') }}">📄 Reportes</a></li>
-            {% endif %}
-        </ul>
-        <div class="sidebar-footer">
-            <span>{{ current_user.nombre_completo }}</span>
-            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar Sesión</a>
-        </div>
-    </nav>
-    <main class="main-content">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </main>
-    {% else %}
-    {% block fullpage %}{% endblock %}
-    {% endif %}
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    {% block scripts %}{% endblock %}
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
-
 </html>

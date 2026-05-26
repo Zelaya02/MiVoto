@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Estado de Socio - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('socios.index') }}" class="btn btn-sm btn-outline-secondary mb-3"><i class="fa-solid fa-arrow-left me-1"></i>Volver al listado</a>
+    <h2 class="fw-bold"><i class="fa-solid fa-user text-primary me-2"></i>Detalle del Socio</h2>
+</div>
+
+<div class="row g-4">
+    <!-- Ficha del Socio -->
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+                <h5 class="fw-bold mb-0">Información Personal</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Nombre Completo</span>
+                        <span class="fw-bold">{{ socio.nombres }} {{ socio.apellidos }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Cédula de Identidad</span>
+                        <span>{{ socio.cedula }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Número de Socio</span>
+                        <span>{{ socio.nro_socio }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Agencia</span>
+                        <span>{{ socio.agencia or 'N/A' }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0">
+                        <span class="text-muted">Lugar de Trabajo</span>
+                        <span>{{ socio.trabajo or 'N/A' }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado de Habilitación y Moras -->
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Estado para Asambleas</h5>
+                    {% if habilitado %}
+                        <span class="badge bg-success fs-6 px-3 py-2"><i class="fa-solid fa-check-circle me-1"></i>Habilitado</span>
+                    {% else %}
+                        <span class="badge bg-danger fs-6 px-3 py-2"><i class="fa-solid fa-times-circle me-1"></i>Inhabilitado (Mora)</span>
+                    {% endif %}
+                </div>
+
+                <h6 class="text-muted fw-bold text-uppercase small mb-3">Historial de Productos en Mora</h6>
+                {% if moras %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de Consulta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mora in moras %}
+                                <tr>
+                                    <td class="fw-bold">{{ mora.producto }}</td>
+                                    <td><span class="badge bg-danger">{{ mora.estado }}</span></td>
+                                    <td>{{ mora.fecha_consulta }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <i class="fa-solid fa-info-circle me-2"></i>
+                        <div>El socio está al día con sus obligaciones. No se registran moras activas.</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

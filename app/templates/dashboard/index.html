@@ -1,106 +1,65 @@
 {% extends "base.html" %}
+{% block title %}Panel Principal - Mi Voto 2.0{% endblock %}
+
 {% block content %}
-<div class="page-header">
-    <h1>Dashboard</h1>
-    <p class="text-muted">Resumen general del sistema</p>
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold text-dark">Bienvenido, {{ current_user.nombre_completo }}</h2>
+        <p class="text-muted">Panel de control de Mi Voto 2.0. Tu rol actual es: <span class="badge bg-info text-dark">{{ current_user.rol.nombre|capitalize }}</span></p>
+    </div>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-info">
-            <h3>{{ total_socios }}</h3>
-            <p>Socios Activos</p>
-        </div>
-    </div>
-
-    <div class="stat-card stat-success">
-        <div class="stat-icon">✅</div>
-        <div class="stat-info">
-            <h3>{{ socios_al_dia }}</h3>
-            <p>Al día con cuotas</p>
-        </div>
-    </div>
-
-    <div class="stat-card stat-warning">
-        <div class="stat-icon">⚠️</div>
-        <div class="stat-info">
-            <h3>{{ socios_morosos }}</h3>
-            <p>Con cuotas pendientes</p>
-        </div>
-    </div>
-
-    {% if asamblea_activa %}
-    <div class="stat-card stat-highlight">
-        <div class="stat-icon">📋</div>
-        <div class="stat-info">
-            <h3>{{ asamblea_activa.titulo }}</h3>
-            <p>Asamblea en curso - {{ asamblea_activa.fecha }}</p>
-        </div>
-    </div>
-
-    <div class="stat-card stat-primary">
-        <div class="stat-icon">🚪</div>
-        <div class="stat-info">
-            <h3>{{ acreditados_hoy }} / {{ total_habilitados }}</h3>
-            <p>Acreditados en puerta</p>
-            <div class="progress-bar">
-                <div class="progress-fill" data-width="{{ porcentaje_asistencia }}%"></div>
+<div class="row g-4">
+    <!-- Card Socios -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-users fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Gestión de Socios</h5>
+                <p class="card-text text-muted small">Administra los datos personales y revisa el estado de morosidad de los cooperativistas.</p>
+                <a href="#" class="btn btn-outline-primary mt-2">Ir a Socios</a>
             </div>
         </div>
     </div>
-    {% endif %}
-</div>
 
-{% if asamblea_activa %}
-<div class="card mt-4">
-    <div class="card-header">
-        <h2>Últimos Acreditados</h2>
+    <!-- Card Asambleas -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-calendar-check fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Asambleas</h5>
+                <p class="card-text text-muted small">Crea eventos, genera el padrón de habilitados e imprime las credenciales.</p>
+                <a href="#" class="btn btn-outline-success mt-2">Ir a Asambleas</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>N° Socio</th>
-                    <th>Nombre</th>
-                    <th>Voz</th>
-                    <th>Voto</th>
-                    <th>Hora</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for asistencia in ultimas_acreditaciones %}
-                <tr>
-                    <td>{{ asistencia.socio.numero_socio }}</td>
-                    <td>{{ asistencia.socio.nombre_completo }}</td>
-                    <td>
-                        <span
-                            class="badge {% if asistencia.habilitado_voz %}badge-success{% else %}badge-danger{% endif %}">
-                            {{ 'Sí' if asistencia.habilitado_voz else 'No' }}
-                        </span>
-                    </td>
-                    <td>
-                        <span
-                            class="badge {% if asistencia.habilitado_voto %}badge-success{% else %}badge-danger{% endif %}">
-                            {{ 'Sí' if asistencia.habilitado_voto else 'No' }}
-                        </span>
-                    </td>
-                    <td>{{ asistencia.fecha_acreditacion.strftime('%H:%M:%S') }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+    <!-- Card Votaciones -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-check-to-slot fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Mociones y Votos</h5>
+                <p class="card-text text-muted small">Configura las opciones de votación y realiza el escrutinio electrónico.</p>
+                <a href="#" class="btn btn-outline-warning mt-2">Ir a Votaciones</a>
+            </div>
+        </div>
     </div>
 </div>
-{% endif %}
-{% endblock %}
 
-{% block scripts %}
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.progress-fill[data-width]').forEach(function(el) {
-            el.style.width = el.getAttribute('data-width');
-        });
-    });
-</script>
+<style>
+.transition-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.transition-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
 {% endblock %}
