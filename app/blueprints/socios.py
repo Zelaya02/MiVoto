@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.models import Socio, Estado
 from app.extensions import db
 
@@ -8,7 +8,6 @@ bp = Blueprint('socios', __name__, url_prefix='/socios')
 @bp.route('/')
 @login_required
 def index():
-    # Búsqueda sencilla por cédula o apellido
     q = request.args.get('q', '')
     if q:
         socios = Socio.query.filter(
@@ -21,14 +20,111 @@ def index():
         
     return render_template('socios/index.html', socios=socios, q=q)
 
+
+@bp.route('/nuevo', methods=['GET', 'POST'])
+@login_required
+def nuevo():
+    if request.method == 'POST':
+        cedula        = request.form.get('cedula', '').strip()
+        nro_socio     = request.form.get('nro_socio', '').strip()
+        nombres       = request.form.get('nombres', '').strip()
+        apellidos     = request.form.get('apellidos', '').strip()
+        fecha_nac     = request.form.get('fecha_nacimiento') or None
+        fecha_ing     = request.form.get('fecha_ingreso') or None
+        sexo          = request.form.get('sexo', '').strip()
+        trabajo       = request.form.get('trabajo', '').strip()
+        agencia       = request.form.get('agencia', '').strip()
+        situacion     = request.form.get('situacion', 'activo').strip()
+
+        if not cedula or not nro_socio or not nombres or not apellidos:
+            flash('Los campos Cédula, Nro. Socio, Nombres y Apellidos son obligatorios.', 'danger')
+            return render_template('socios/form.html', socio=None)
+
+        if Socio.query.filter_by(cedula=cedula).first():
+            flash('Ya existe un socio con esa cédula.', 'danger')
+            return render_template('socios/form.html', socio=None)
+
+        if Socio.query.filter_by(nro_socio=nro_socio).first():
+            flash('Ya existe un socio con ese número de socio.', 'danger')
+            return render_template('socios/form.html', socio=None)
+
+        socio = Socio(
+            cedula=cedula,
+            nro_socio=nro_socio,
+            nombres=nombres,
+            apellidos=apellidos,
+            fecha_nacimiento=fecha_nac,
+            fecha_ingreso=fecha_ing,
+            sexo=sexo,
+            trabajo=trabajo,
+            agencia=agencia,
+            situacion=situacion,
+            creado_por=current_user.username,
+            actualizado_por=current_user.username,
+        )
+        db.session.add(socio)
+        db.session.commit()
+        flash('Socio creado exitosamente.', 'success')
+        return redirect(url_for('socios.index'))
+
+    return render_template('socios/form.html', socio=None)
+
+
+@bp.route('/<int:id>/editar', methods=['GET', 'POST'])
+@login_required
+def editar(id):
+    socio = Socio.query.get_or_404(id)
+
+    if request.method == 'POST':
+        nueva_cedula    = request.form.get('cedula', '').strip()
+        nuevo_nro       = request.form.get('nro_socio', '').strip()
+        nombres         = request.form.get('nombres', '').strip()
+        apellidos       = request.form.get('apellidos', '').strip()
+        fecha_nac       = request.form.get('fecha_nacimiento') or None
+        fecha_ing       = request.form.get('fecha_ingreso') or None
+        sexo            = request.form.get('sexo', '').strip()
+        trabajo         = request.form.get('trabajo', '').strip()
+        agencia         = request.form.get('agencia', '').strip()
+        situacion       = request.form.get('situacion', 'activo').strip()
+
+        if not nueva_cedula or not nuevo_nro or not nombres or not apellidos:
+            flash('Los campos Cédula, Nro. Socio, Nombres y Apellidos son obligatorios.', 'danger')
+            return render_template('socios/form.html', socio=socio)
+
+        duplicado_cedula = Socio.query.filter(Socio.cedula == nueva_cedula, Socio.id != id).first()
+        if duplicado_cedula:
+            flash('Ya existe otro socio con esa cédula.', 'danger')
+            return render_template('socios/form.html', socio=socio)
+
+        duplicado_nro = Socio.query.filter(Socio.nro_socio == nuevo_nro, Socio.id != id).first()
+        if duplicado_nro:
+            flash('Ya existe otro socio con ese número de socio.', 'danger')
+            return render_template('socios/form.html', socio=socio)
+
+        socio.cedula           = nueva_cedula
+        socio.nro_socio        = nuevo_nro
+        socio.nombres          = nombres
+        socio.apellidos        = apellidos
+        socio.fecha_nacimiento = fecha_nac
+        socio.fecha_ingreso    = fecha_ing
+        socio.sexo             = sexo
+        socio.trabajo          = trabajo
+        socio.agencia          = agencia
+        socio.situacion        = situacion
+        socio.actualizado_por  = current_user.username
+        db.session.commit()
+        flash('Socio actualizado correctamente.', 'success')
+        return redirect(url_for('socios.index'))
+
+    return render_template('socios/form.html', socio=socio)
+
+
 @bp.route('/<int:id>/estado')
 @login_required
 def estado(id):
     socio = Socio.query.get_or_404(id)
-    # Obtener el estado de morosidad
     estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
     if not estado_socio:
-        # Si no existe registro de estado, asumimos al día por defecto
         estado_socio = Estado(
             socio_id=socio.id,
             mora_cc='al_dia',
@@ -41,7 +137,6 @@ def estado(id):
         db.session.add(estado_socio)
         db.session.commit()
         
-    # Verificar si está habilitado (todas las moras deben estar 'al_dia')
     moras = {
         'Caja de Ahorro / CC': estado_socio.mora_cc,
         'Solidaridad': estado_socio.mora_sol,
@@ -55,4 +150,3 @@ def estado(id):
     habilitado = len(moras_activas) == 0
     
     return render_template('socios/estado.html', socio=socio, estado_socio=estado_socio, moras_activas=moras_activas, habilitado=habilitado)
-

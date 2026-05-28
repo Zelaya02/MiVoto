@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}{% if socio %}Editar Socio{% else %}Nuevo Socio{% endif %} - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">
+        <i class="fa-solid fa-user-pen text-primary me-2"></i>
+        {% if socio %}Editar Socio{% else %}Nuevo Socio{% endif %}
+    </h2>
+    <a href="{{ url_for('socios.index') }}" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i>Volver
+    </a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="POST" action="">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Nro. Socio <span class="text-danger">*</span></label>
+                    <input type="text" name="nro_socio" class="form-control"
+                           value="{{ socio.nro_socio if socio else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Cédula <span class="text-danger">*</span></label>
+                    <input type="text" name="cedula" class="form-control"
+                           value="{{ socio.cedula if socio else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Situación</label>
+                    <select name="situacion" class="form-select">
+                        <option value="activo" {% if not socio or socio.situacion == 'activo' %}selected{% endif %}>Activo</option>
+                        <option value="inactivo" {% if socio and socio.situacion == 'inactivo' %}selected{% endif %}>Inactivo</option>
+                        <option value="suspendido" {% if socio and socio.situacion == 'suspendido' %}selected{% endif %}>Suspendido</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Nombres <span class="text-danger">*</span></label>
+                    <input type="text" name="nombres" class="form-control"
+                           value="{{ socio.nombres if socio else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Apellidos <span class="text-danger">*</span></label>
+                    <input type="text" name="apellidos" class="form-control"
+                           value="{{ socio.apellidos if socio else '' }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Fecha de Nacimiento</label>
+                    <input type="date" name="fecha_nacimiento" class="form-control"
+                           value="{{ socio.fecha_nacimiento.strftime('%Y-%m-%d') if socio and socio.fecha_nacimiento else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Fecha de Ingreso</label>
+                    <input type="date" name="fecha_ingreso" class="form-control"
+                           value="{{ socio.fecha_ingreso.strftime('%Y-%m-%d') if socio and socio.fecha_ingreso else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Sexo</label>
+                    <select name="sexo" class="form-select">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="masculino" {% if socio and socio.sexo == 'masculino' %}selected{% endif %}>Masculino</option>
+                        <option value="femenino" {% if socio and socio.sexo == 'femenino' %}selected{% endif %}>Femenino</option>
+                        <option value="otro" {% if socio and socio.sexo == 'otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Lugar de Trabajo</label>
+                    <input type="text" name="trabajo" class="form-control"
+                           value="{{ socio.trabajo if socio and socio.trabajo else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Agencia</label>
+                    <input type="text" name="agencia" class="form-control"
+                           value="{{ socio.agencia if socio and socio.agencia else '' }}">
+                </div>
+            </div>
+
+            <hr class="my-4">
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ url_for('socios.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>
+                    {% if socio %}Guardar Cambios{% else %}Crear Socio{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
