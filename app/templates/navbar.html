@@ -9,23 +9,7 @@
       
       <div class="collapse navbar-collapse" id="navbarNav">
         {% if current_user.is_authenticated %}
-        <ul class="navbar-nav me-auto">
-          
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa-solid fa-users me-1"></i>Socios</a>
-          </li>
-          
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa-solid fa-calendar-check me-1"></i>Asambleas</a>
-          </li>
 
-          {% if current_user.rol.nombre == 'admin' %}
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa-solid fa-user-shield me-1"></i>Usuarios</a>
-          </li>
-          {% endif %}
-          
-        </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
