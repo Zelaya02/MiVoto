@@ -10,44 +10,72 @@
 </div>
 
 <div class="row g-4">
-    <!-- Card Socios -->
+    <!-- Card Roles -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-user-tie fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Roles</h5>
+                <p class="card-text text-muted small">Administración de roles del sistema.</p>
+                <a href="{{ url_for('roles.index') }}" class="btn btn-outline-secondary mt-2">Ir a Roles</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Usuario -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-user-gear fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Usuario</h5>
+                <p class="card-text text-muted small">Gestión de usuarios del sistema.</p>
+                <a href="#" class="btn btn-outline-info mt-2">Ir a Usuarios</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Socio -->
     <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm transition-hover">
             <div class="card-body text-center p-4">
                 <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
                     <i class="fa-solid fa-users fa-2x"></i>
                 </div>
-                <h5 class="card-title fw-bold">Gestión de Socios</h5>
-                <p class="card-text text-muted small">Administra los datos personales y revisa el estado de morosidad de los cooperativistas.</p>
+                <h5 class="card-title fw-bold">Socio</h5>
+                <p class="card-text text-muted small">Administra los datos personales y estado de los socios.</p>
                 <a href="{{ url_for('socios.index') }}" class="btn btn-outline-primary mt-2">Ir a Socios</a>
             </div>
         </div>
     </div>
 
-    <!-- Card Asambleas -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-calendar-check fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Asambleas</h5>
-                <p class="card-text text-muted small">Crea eventos, genera el padrón de habilitados e imprime las credenciales.</p>
-                <a href="{{ url_for('asambleas.index') }}" class="btn btn-outline-success mt-2">Ir a Asambleas</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card Votaciones -->
+    <!-- Card Estado -->
     <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm transition-hover">
             <div class="card-body text-center p-4">
                 <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-check-to-slot fa-2x"></i>
+                    <i class="fa-solid fa-signal fa-2x"></i>
                 </div>
-                <h5 class="card-title fw-bold">Mociones y Votos</h5>
-                <p class="card-text text-muted small">Configura las opciones de votación y realiza el escrutinio electrónico.</p>
-                <a href="{{ url_for('asambleas.index') }}" class="btn btn-outline-warning mt-2">Ir a Asambleas (Votaciones)</a>
+                <h5 class="card-title fw-bold">Estado</h5>
+                <p class="card-text text-muted small">Revisión de estados y habilitaciones.</p>
+                <a href="#" class="btn btn-outline-warning mt-2">Ir a Estados</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Acreditacion -->
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm transition-hover">
+            <div class="card-body text-center p-4">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="fa-solid fa-id-badge fa-2x"></i>
+                </div>
+                <h5 class="card-title fw-bold">Acreditación</h5>
+                <p class="card-text text-muted small">Gestión de acreditaciones para las asambleas.</p>
+                <a href="#" class="btn btn-outline-success mt-2">Ir a Acreditación</a>
             </div>
         </div>
     </div>

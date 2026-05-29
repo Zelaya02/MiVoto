@@ -10,6 +10,23 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         {% if current_user.is_authenticated %}
 
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('roles.index') }}"><i class="fa-solid fa-user-tie me-1"></i>Roles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa-solid fa-user-gear me-1"></i>Usuario</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('socios.index') }}"><i class="fa-solid fa-users me-1"></i>Socio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa-solid fa-signal me-1"></i>Estado</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa-solid fa-id-badge me-1"></i>Acreditación</a>
+          </li>
+        </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
