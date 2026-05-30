@@ -19,6 +19,7 @@ def create_app(config_class=Config):
     from app.blueprints.asambleas import bp as asambleas_bp
     from app.blueprints.votacion import bp as votacion_bp
     from app.blueprints.roles import bp as roles_bp
+    from app.blueprints.usuarios import bp as usuarios_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -26,5 +27,6 @@ def create_app(config_class=Config):
     app.register_blueprint(asambleas_bp)
     app.register_blueprint(votacion_bp)
     app.register_blueprint(roles_bp)
+    app.register_blueprint(usuarios_bp)
 
     return app
