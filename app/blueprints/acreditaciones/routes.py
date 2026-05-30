@@ -45,11 +45,11 @@ def acreditar(padron_id):
     elif padron_registro.situacion != 'habilitado':
         flash(f'El socio {padron_registro.socio.apellidos_nombres} no figura como habilitado.', 'danger')
     else:
-        nueva_credencial = Credencial(
-                                    padron_id=padron_id, 
-                                    descripcion="Acreditación Regular",
-                                    creado_por=current_user.username,
-                                    actualizado_por=current_user.username)
+        nueva_credencial = Credencial()
+        nueva_credencial.padron_id = padron_id
+        nueva_credencial.descripcion = "Acreditación Regular"
+        nueva_credencial.creado_por = current_user.username
+        nueva_credencial.actualizado_por = current_user.username
         db.session.add(nueva_credencial)
         db.session.commit()
         flash(f'Credencial generada y socio {padron_registro.socio.apellidos_nombres} acreditado.', 'success')

@@ -128,8 +128,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('acreditacionChart').getContext('2d');
-    const acreditados = {{ stats.acreditados }};
-    const noAcreditados = {{ stats.no_acreditados }};
+    const acreditados = parseInt("{{ stats.acreditados }}", 10) || 0;
+    const noAcreditados = parseInt("{{ stats.no_acreditados }}", 10) || 0;
     
     // Si no hay datos, mostrar algo básico
     if (acreditados === 0 && noAcreditados === 0) {
