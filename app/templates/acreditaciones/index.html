@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Consultar Padrón y Acreditación - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="fa-solid fa-id-badge text-success me-2"></i>Módulo de Acreditaciones</h2>
+</div>
+
+<p class="text-muted mb-4">A continuación, selecciona la Asamblea para consultar su padrón generado y realizar el control de asistencia (Acreditación).</p>
+
+<div class="row g-4">
+    {% for asamblea in asambleas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="badge bg-secondary text-uppercase">{{ asamblea.tipo }}</span>
+                    {% if asamblea.estado == 'programada' %}
+                        <span class="badge bg-primary">Programada</span>
+                    {% elif asamblea.estado == 'en_curso' %}
+                        <span class="badge bg-success">En Curso</span>
+                    {% else %}
+                        <span class="badge bg-dark">Finalizada</span>
+                    {% endif %}
+                </div>
+                <h5 class="fw-bold mb-1">
+                    {{ asamblea.fecha.strftime('%d/%m/%Y') }} - {{ asamblea.hora_inicio.strftime('%H:%M') if asamblea.hora_inicio else '--:--' }}
+                </h5>
+                <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i>{{ asamblea.lugar or 'Sin definir' }}</p>
+                
+                <a href="{{ url_for('acreditaciones.padron', asamblea_id=asamblea.id) }}" class="btn btn-success w-100 mt-2">
+                    <i class="fa-solid fa-users me-1"></i> Consultar Padrón
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info border-0 shadow-sm">
+            <i class="fa-solid fa-circle-info me-2"></i> No hay asambleas registradas. Primero debes crear una Asamblea.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

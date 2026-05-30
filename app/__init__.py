@@ -21,6 +21,7 @@ def create_app(config_class=Config):
     from app.blueprints.roles import bp as roles_bp
     from app.blueprints.usuarios import bp as usuarios_bp
     from app.blueprints.estados import bp as estados_bp
+    from app.blueprints.acreditaciones import bp as acreditaciones_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -30,5 +31,6 @@ def create_app(config_class=Config):
     app.register_blueprint(roles_bp)
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(estados_bp)
+    app.register_blueprint(acreditaciones_bp)
 
     return app
