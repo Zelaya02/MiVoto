@@ -26,12 +26,11 @@ def nuevo():
             flash('Ya existe un rol con ese nombre.', 'danger')
             return render_template('roles/form.html', rol=None)
 
-        rol = Rol(
-            nombre=nombre,
-            descripcion=descripcion,
-            creado_por=current_user.username,
-            actualizado_por=current_user.username
-        )
+        rol = Rol()
+        rol.nombre = nombre
+        rol.descripcion = descripcion
+        rol.creado_por = current_user.username
+        rol.actualizado_por = current_user.username
         db.session.add(rol)
         db.session.commit()
         flash('Rol creado exitosamente.', 'success')

@@ -48,20 +48,19 @@ def nuevo():
             flash('Ya existe un socio con ese número de socio.', 'danger')
             return render_template('socios/form.html', socio=None)
 
-        socio = Socio(
-            cedula=cedula,
-            nro_socio=nro_socio,
-            nombres=nombres,
-            apellidos=apellidos,
-            fecha_nacimiento=fecha_nac,
-            fecha_ingreso=fecha_ing,
-            sexo=sexo,
-            trabajo=trabajo,
-            agencia=agencia,
-            situacion=situacion,
-            creado_por=current_user.username,
-            actualizado_por=current_user.username,
-        )
+        socio = Socio()
+        socio.cedula = cedula
+        socio.nro_socio = nro_socio
+        socio.nombres = nombres
+        socio.apellidos = apellidos
+        socio.fecha_nacimiento = fecha_nac
+        socio.fecha_ingreso = fecha_ing
+        socio.sexo = sexo
+        socio.trabajo = trabajo
+        socio.agencia = agencia
+        socio.situacion = situacion
+        socio.creado_por = current_user.username
+        socio.actualizado_por = current_user.username
         db.session.add(socio)
         db.session.commit()
         flash('Socio creado exitosamente.', 'success')
@@ -125,15 +124,14 @@ def estado(id):
     socio = Socio.query.get_or_404(id)
     estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
     if not estado_socio:
-        estado_socio = Estado(
-            socio_id=socio.id,
-            mora_cc='al_dia',
-            mora_sol='al_dia',
-            mora_ape='al_dia',
-            mora_credito='al_dia',
-            mora_cabal='al_dia',
-            mora_visa='al_dia'
-        )
+        estado_socio = Estado()
+        estado_socio.socio_id = socio.id
+        estado_socio.mora_cc = 'al_dia'
+        estado_socio.mora_sol = 'al_dia'
+        estado_socio.mora_ape = 'al_dia'
+        estado_socio.mora_credito = 'al_dia'
+        estado_socio.mora_cabal = 'al_dia'
+        estado_socio.mora_visa = 'al_dia'
         db.session.add(estado_socio)
         db.session.commit()
         

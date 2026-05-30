@@ -36,15 +36,14 @@ def nuevo():
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         
-        usuario = Usuario(
-            username=username,
-            email=email,
-            nombre_completo=nombre_completo,
-            password_hash=hashed_password,
-            rol_id=rol_id,
-            creado_por=current_user.username,
-            actualizado_por=current_user.username
-        )
+        usuario = Usuario()
+        usuario.username = username
+        usuario.email = email
+        usuario.nombre_completo = nombre_completo
+        usuario.password_hash = hashed_password
+        usuario.rol_id = rol_id
+        usuario.creado_por = current_user.username
+        usuario.actualizado_por = current_user.username
         db.session.add(usuario)
         db.session.commit()
         flash('Usuario creado exitosamente.', 'success')
