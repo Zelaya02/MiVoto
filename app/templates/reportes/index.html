@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+{% block title %}Reportes - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="fa-solid fa-chart-bar text-primary me-2"></i>Reportes</h2>
+    <span class="text-muted small"><i class="fa-solid fa-circle-info me-1"></i>Datos en tiempo real</span>
+</div>
+
+{# ── KPI Cards ─────────────────────────────────────────────────────── #}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-users fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-primary">{{ total_socios }}</div>
+                <div class="text-muted small">Total Socios</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-user-check fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-success">{{ socios_activos }}</div>
+                <div class="text-muted small">Socios Activos</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-info bg-opacity-10 text-info d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-calendar-days fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-info">{{ total_asambleas }}</div>
+                <div class="text-muted small">Asambleas</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-id-badge fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-warning">{{ total_credenciales }}</div>
+                <div class="text-muted small">Acreditaciones</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-gavel fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-secondary">{{ total_mociones }}</div>
+                <div class="text-muted small">Mociones</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card border-0 shadow-sm h-100 text-center">
+            <div class="card-body py-3">
+                <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-2" style="width:48px;height:48px;">
+                    <i class="fa-solid fa-check-to-slot fa-lg"></i>
+                </div>
+                <div class="fs-3 fw-bold text-danger">{{ total_votos }}</div>
+                <div class="text-muted small">Votos emitidos</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Pestañas ──────────────────────────────────────────────────────── #}
+<ul class="nav nav-tabs mb-3" id="reportesTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-resumen" data-bs-toggle="tab" data-bs-target="#resumen" type="button" role="tab">
+            <i class="fa-solid fa-table-columns me-1"></i>Resumen
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-padron" data-bs-toggle="tab" data-bs-target="#padron" type="button" role="tab">
+            <i class="fa-solid fa-list-check me-1"></i>Padrón
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-acreditacion" data-bs-toggle="tab" data-bs-target="#acreditacion" type="button" role="tab">
+            <i class="fa-solid fa-id-badge me-1"></i>Acreditación
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-socios" data-bs-toggle="tab" data-bs-target="#socios" type="button" role="tab">
+            <i class="fa-solid fa-users me-1"></i>Socios
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="reportesTabsContent">
+
+    {# ── Tab 1: RESUMEN ──────────────────────────────────────────── #}
+    <div class="tab-pane fade show active" id="resumen" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="fa-solid fa-calendar-check text-primary me-2"></i>Estado de Asambleas
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Asamblea</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th class="text-center">Padrón</th>
+                            <th class="text-center">Habilitados</th>
+                            <th class="text-center">Acreditados</th>
+                            <th>Progreso Acreditación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in asambleas_stats %}
+                        <tr>
+                            <td class="fw-semibold">{{ s.asamblea.lugar or 'Sin lugar' }}</td>
+                            <td>{{ s.asamblea.fecha.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">{{ s.asamblea.tipo|capitalize }}</span>
+                            </td>
+                            <td>
+                                {% if s.asamblea.estado == 'programada' %}
+                                    <span class="badge bg-warning text-dark">Programada</span>
+                                {% elif s.asamblea.estado == 'en_curso' %}
+                                    <span class="badge bg-success">En Curso</span>
+                                {% elif s.asamblea.estado == 'finalizada' %}
+                                    <span class="badge bg-secondary">Finalizada</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark">{{ s.asamblea.estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ s.total_padron }}</td>
+                            <td class="text-center">
+                                <span class="text-success fw-semibold">{{ s.habilitados }}</span>
+                                <span class="text-muted small"> / {{ s.total_padron }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="text-primary fw-semibold">{{ s.acreditados }}</span>
+                                <span class="text-muted small"> / {{ s.habilitados }}</span>
+                            </td>
+                            <td style="min-width:140px;">
+                                <div class="progress" style="height:8px;" title="{{ s.pct_acreditados }}% acreditados">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width:{{ s.pct_acreditados }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ s.pct_acreditados }}%</small>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No hay asambleas registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# ── Tab 2: PADRÓN ───────────────────────────────────────────── #}
+    <div class="tab-pane fade" id="padron" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="fa-solid fa-list-check text-success me-2"></i>Detalle de Padrón por Asamblea
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Asamblea</th>
+                            <th>Fecha</th>
+                            <th class="text-center">Total Padrón</th>
+                            <th class="text-center">Habilitados</th>
+                            <th class="text-center">Inhabilitados</th>
+                            <th>% Habilitados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in asambleas_stats %}
+                        <tr>
+                            <td class="fw-semibold">{{ s.asamblea.lugar or 'Sin lugar' }}</td>
+                            <td>{{ s.asamblea.fecha.strftime('%d/%m/%Y') }}</td>
+                            <td class="text-center fw-semibold">{{ s.total_padron }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2">{{ s.habilitados }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2">{{ s.inhabilitados }}</span>
+                            </td>
+                            <td style="min-width:160px;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:10px;">
+                                        <div class="progress-bar bg-success" style="width:{{ s.pct_habilitados }}%"></div>
+                                        <div class="progress-bar bg-danger" style="width:{{ 100 - s.pct_habilitados }}%"></div>
+                                    </div>
+                                    <small class="fw-semibold" style="width:36px;">{{ s.pct_habilitados }}%</small>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay asambleas registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if asambleas_stats %}
+                    <tfoot class="table-light fw-semibold">
+                        <tr>
+                            <td colspan="2">Totales</td>
+                            <td class="text-center">{{ asambleas_stats | sum(attribute='total_padron') }}</td>
+                            <td class="text-center text-success">{{ asambleas_stats | sum(attribute='habilitados') }}</td>
+                            <td class="text-center text-danger">{{ asambleas_stats | sum(attribute='inhabilitados') }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# ── Tab 3: ACREDITACIÓN ─────────────────────────────────────── #}
+    <div class="tab-pane fade" id="acreditacion" role="tabpanel">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom fw-semibold">
+                <i class="fa-solid fa-id-badge text-warning me-2"></i>Detalle de Acreditación por Asamblea
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Asamblea</th>
+                            <th>Fecha</th>
+                            <th class="text-center">Habilitados</th>
+                            <th class="text-center">Acreditados</th>
+                            <th class="text-center">Pendientes</th>
+                            <th>% Acreditación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in asambleas_stats %}
+                        <tr>
+                            <td class="fw-semibold">{{ s.asamblea.lugar or 'Sin lugar' }}</td>
+                            <td>{{ s.asamblea.fecha.strftime('%d/%m/%Y') }}</td>
+                            <td class="text-center fw-semibold">{{ s.habilitados }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2">{{ s.acreditados }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2">{{ s.pendientes }}</span>
+                            </td>
+                            <td style="min-width:160px;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:10px;">
+                                        <div class="progress-bar bg-primary" style="width:{{ s.pct_acreditados }}%"></div>
+                                        <div class="progress-bar bg-warning" style="width:{{ 100 - s.pct_acreditados }}%"></div>
+                                    </div>
+                                    <small class="fw-semibold" style="width:36px;">{{ s.pct_acreditados }}%</small>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay asambleas registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if asambleas_stats %}
+                    <tfoot class="table-light fw-semibold">
+                        <tr>
+                            <td colspan="2">Totales</td>
+                            <td class="text-center">{{ asambleas_stats | sum(attribute='habilitados') }}</td>
+                            <td class="text-center text-primary">{{ asambleas_stats | sum(attribute='acreditados') }}</td>
+                            <td class="text-center text-warning-emphasis">{{ asambleas_stats | sum(attribute='pendientes') }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# ── Tab 4: SOCIOS ───────────────────────────────────────────── #}
+    <div class="tab-pane fade" id="socios" role="tabpanel">
+        <div class="row g-3">
+
+            {# Situación #}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom fw-semibold">
+                        <i class="fa-solid fa-signal text-success me-2"></i>Por Situación
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Situación</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sit in situaciones %}
+                                <tr>
+                                    <td>
+                                        {% if sit.nombre == 'activo' %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% elif sit.nombre == 'inactivo' %}
+                                            <span class="badge bg-danger">Inactivo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ sit.nombre|capitalize }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center fw-semibold">{{ sit.total }}</td>
+                                    <td class="text-center text-muted">
+                                        {% if total_socios > 0 %}
+                                            {{ (sit.total / total_socios * 100)|round(1) }}%
+                                        {% else %}—{% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">Sin datos.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {# Sexo #}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom fw-semibold">
+                        <i class="fa-solid fa-venus-mars text-info me-2"></i>Por Sexo
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sexo</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sx in sexos %}
+                                <tr>
+                                    <td>
+                                        {% if sx.nombre|lower == 'masculino' or sx.nombre|lower == 'm' %}
+                                            <i class="fa-solid fa-mars text-primary me-1"></i>{{ sx.nombre|capitalize }}
+                                        {% elif sx.nombre|lower == 'femenino' or sx.nombre|lower == 'f' %}
+                                            <i class="fa-solid fa-venus text-danger me-1"></i>{{ sx.nombre|capitalize }}
+                                        {% else %}
+                                            <i class="fa-solid fa-circle-question text-muted me-1"></i>{{ sx.nombre|capitalize }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center fw-semibold">{{ sx.total }}</td>
+                                    <td class="text-center text-muted">
+                                        {% if total_socios > 0 %}
+                                            {{ (sx.total / total_socios * 100)|round(1) }}%
+                                        {% else %}—{% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">Sin datos.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {# Agencia #}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-bottom fw-semibold">
+                        <i class="fa-solid fa-building text-secondary me-2"></i>Por Agencia
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Agencia</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-center">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ag in agencias %}
+                                <tr>
+                                    <td>{{ ag.nombre }}</td>
+                                    <td class="text-center fw-semibold">{{ ag.total }}</td>
+                                    <td class="text-center text-muted">
+                                        {% if total_socios > 0 %}
+                                            {{ (ag.total / total_socios * 100)|round(1) }}%
+                                        {% else %}—{% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">Sin datos.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>{# /row #}
+    </div>
+
+</div>{# /tab-content #}
+
+<style>
+.nav-tabs .nav-link { color: #6c757d; font-weight: 500; }
+.nav-tabs .nav-link.active { color: #0d6efd; font-weight: 600; }
+.card { transition: box-shadow .2s; }
+</style>
+{% endblock %}

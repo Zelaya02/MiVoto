@@ -9,37 +9,17 @@
     </div>
 </div>
 
-{% if stats %}
-<div class="row mb-5">
-    <div class="col-md-12">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-primary me-2"></i>Métricas de Acreditación (Asamblea {{ stats.asamblea }})</h5>
-                <hr>
-                <div class="row align-items-center">
-                    <div class="col-md-5 mb-4 mb-md-0 text-center">
-                        <canvas id="acreditacionChart" style="max-height: 250px;"></canvas>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-3">
-                            <span class="fw-bold text-muted"><i class="fa-solid fa-users text-primary me-2"></i>Total Habilitados (Padrón):</span>
-                            <span class="fs-4 fw-bold text-primary">{{ stats.total_habilitados }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center bg-success bg-opacity-10 p-3 rounded mb-3">
-                            <span class="fw-bold text-success"><i class="fa-solid fa-check-circle me-2"></i>Acreditados (Asistentes):</span>
-                            <span class="fs-4 fw-bold text-success">{{ stats.acreditados }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center bg-danger bg-opacity-10 p-3 rounded">
-                            <span class="fw-bold text-danger"><i class="fa-solid fa-times-circle me-2"></i>No Acreditados (Ausentes):</span>
-                            <span class="fs-4 fw-bold text-danger">{{ stats.no_acreditados }}</span>
-                        </div>
-                    </div>
-                </div>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center" role="alert">
+            <i class="fa-solid fa-chart-bar fa-lg me-3"></i>
+            <div>
+                Para ver métricas detalladas de acreditación y padrón, accedé a la pestaña
+                <a href="{{ url_for('reportes.index') }}" class="alert-link">Reportes</a>.
             </div>
         </div>
     </div>
 </div>
-{% endif %}
 
 <div class="row g-4">
     <!-- Card Roles -->
@@ -93,7 +73,7 @@
                 </div>
                 <h5 class="card-title fw-bold">Estado</h5>
                 <p class="card-text text-muted small">Revisión de estados y habilitaciones.</p>
-                <a href="#" class="btn btn-outline-warning mt-2">Ir a Estados</a>
+                <a href="{{ url_for('estados.index') }}" class="btn btn-outline-warning mt-2">Ir a Estados</a>
             </div>
         </div>
     </div>
@@ -107,7 +87,7 @@
                 </div>
                 <h5 class="card-title fw-bold">Acreditación</h5>
                 <p class="card-text text-muted small">Gestión de acreditaciones para las asambleas.</p>
-                <a href="#" class="btn btn-outline-success mt-2">Ir a Acreditación</a>
+                <a href="{{ url_for('acreditaciones.index') }}" class="btn btn-outline-success mt-2">Ir a Acreditación</a>
             </div>
         </div>
     </div>
@@ -123,64 +103,5 @@
 }
 </style>
 
-{% if stats %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('acreditacionChart').getContext('2d');
-    const acreditados = parseInt("{{ stats.acreditados }}", 10) || 0;
-    const noAcreditados = parseInt("{{ stats.no_acreditados }}", 10) || 0;
-    
-    // Si no hay datos, mostrar algo básico
-    if (acreditados === 0 && noAcreditados === 0) {
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Sin Padrón Generado o Vacío'],
-                datasets: [{ data: [1], backgroundColor: ['#e9ecef'] }]
-            },
-            options: { responsive: true, plugins: { tooltip: { enabled: false } } }
-        });
-        return;
-    }
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Acreditados', 'No Acreditados (Ausentes)'],
-            datasets: [{
-                data: [acreditados, noAcreditados],
-                backgroundColor: [
-                    '#198754', // Success green
-                    '#dc3545'  // Danger red
-                ],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'bottom' },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) { label += ': '; }
-                            label += context.raw;
-                            
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((context.raw / total) * 100);
-                            label += ` (${percentage}%)`;
-                            return label;
-                        }
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
-{% endif %}
 {% endblock %}
