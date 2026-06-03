@@ -1,16 +1,44 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Asamblea, PadronAsamblea, Credencial
+from app.models import Socio, Asamblea, PadronAsamblea, Credencial
 from app.extensions import db
 
 bp = Blueprint('acreditaciones', __name__, url_prefix='/acreditaciones')
 
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    # Mostrar asambleas recientes para seleccionar su padrón
+    socio = None
+    padron_registro = None
+    asamblea = Asamblea.query.order_by(Asamblea.fecha.desc()).first()
+    
+    if request.method == 'POST':
+        busqueda = request.form.get('busqueda', '').strip()
+        if busqueda:
+            socio = Socio.query.filter((Socio.cedula == busqueda) | (Socio.nro_socio == busqueda)).first()
+            if socio and asamblea:
+                padron_registro = PadronAsamblea.query.filter_by(asamblea_id=asamblea.id, socio_id=socio.id).first()
+                if not padron_registro:
+                    flash(f'El socio {socio.apellidos_nombres} no se encuentra en el padrón de la asamblea actual.', 'warning')
+            elif not socio:
+                flash('No se encontró ningún socio con esa cédula o número.', 'danger')
+        else:
+            flash('Por favor ingresa un dato para la búsqueda.', 'warning')
+            
+    # También obtenemos las asambleas para el selector si fuera necesario, pero por ahora usamos la última
     asambleas = Asamblea.query.order_by(Asamblea.fecha.desc()).all()
-    return render_template('acreditaciones/index.html', asambleas=asambleas)
+    
+    # Verificar si ya está acreditado
+    ya_acreditado = False
+    if padron_registro:
+        ya_acreditado = Credencial.query.filter_by(padron_id=padron_registro.id).first() is not None
+
+    return render_template('acreditaciones/index.html', 
+                           asambleas=asambleas, 
+                           asamblea_actual=asamblea,
+                           socio_resultado=socio,
+                           padron_registro=padron_registro,
+                           ya_acreditado=ya_acreditado)
 
 @bp.route('/<int:asamblea_id>/padron')
 @login_required
@@ -42,8 +70,9 @@ def acreditar(padron_id):
     
     if credencial:
         flash(f'El socio {padron_registro.socio.apellidos_nombres} ya está acreditado.', 'warning')
-    elif padron_registro.situacion != 'habilitado':
-        flash(f'El socio {padron_registro.socio.apellidos_nombres} no figura como habilitado.', 'danger')
+    elif padron_registro.situacion != 'habilitado' and padron_registro.situacion != 'inhabilitado': 
+        # Permitimos acreditar incluso si es inhabilitado (solo voz), pero verificamos consistencia
+        flash(f'Estado de padrón no reconocido.', 'danger')
     else:
         nueva_credencial = Credencial()
         nueva_credencial.padron_id = padron_id
@@ -54,4 +83,34 @@ def acreditar(padron_id):
         db.session.commit()
         flash(f'Credencial generada y socio {padron_registro.socio.apellidos_nombres} acreditado.', 'success')
         
-    return redirect(url_for('acreditaciones.padron', asamblea_id=padron_registro.asamblea_id))
+    return redirect(request.referrer or url_for('acreditaciones.index'))
+
+
+@bp.route('/tarjeta/<int:padron_id>')
+@login_required
+def tarjeta(padron_id):
+    padron_registro = PadronAsamblea.query.get_or_404(padron_id)
+    credencial = Credencial.query.filter_by(padron_id=padron_id).first_or_404()
+    asamblea = padron_registro.asamblea
+    socio = padron_registro.socio
+
+    # Lógica de Voz y Voto
+    # Si cumple todo (habilitado) es Voz y Voto, si no (inhabilitado) es solo Voz
+    tiene_derecho = "VOZ Y VOTO" if padron_registro.situacion == 'habilitado' else "VOZ"
+
+    # Determinar texto de asamblea para el subtítulo
+    tipo = (asamblea.tipo or 'ORDINARIA').upper()
+    anio = asamblea.fecha.year if asamblea.fecha else ''
+    subtitulo = f"ASAMBLEA {tipo} - {anio}"
+
+    return render_template(
+        'acreditaciones/tarjeta.html',
+        socio=socio,
+        asamblea=asamblea,
+        credencial=credencial,
+        subtitulo=subtitulo,
+        tiene_derecho=tiene_derecho,
+        autorizado_por=credencial.creado_por or current_user.username,
+    )
+
+

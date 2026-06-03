@@ -1,45 +1,93 @@
 {% extends "base.html" %}
-{% block title %}Consultar Padrón y Acreditación - Mi Voto 2.0{% endblock %}
+{% block title %}Acreditación de Socios - Mi Voto 2.0{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold"><i class="fa-solid fa-id-badge text-success me-2"></i>Módulo de Acreditaciones</h2>
-</div>
+<div class="row justify-content-center">
+    <div class="col-md-8 mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5 text-center">
+                <div class="mb-4">
+                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                        <i class="fa-solid fa-id-badge fa-3x"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Módulo de Acreditaciones</h3>
+                    <p class="text-muted small">Busca al socio por cédula o número para acreditar su asistencia a la asamblea actual.</p>
+                </div>
+                
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="input-group input-group-lg mb-3 shadow-sm rounded">
+                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-search text-muted"></i></span>
+                        <input type="text" name="busqueda" class="form-control border-start-0 ps-0" placeholder="Cédula o Nro. de Socio..." required autofocus>
+                        <button class="btn btn-success px-4" type="submit">Buscar</button>
+                    </div>
+                </form>
 
-<p class="text-muted mb-4">A continuación, selecciona la Asamblea para consultar su padrón generado y realizar el control de asistencia (Acreditación).</p>
+                {% if socio_resultado %}
+                <hr class="my-4">
+                <div class="text-start animate__animated animate__fadeIn">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center border" style="width: 60px; height: 60px;">
+                                <i class="fa-solid fa-user fa-2x text-secondary"></i>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-0 fw-bold">{{ socio_resultado.apellidos_nombres }}</h5>
+                            <p class="text-muted small mb-0">Socio Nro: {{ socio_resultado.nro_socio }} | C.I.: {{ socio_resultado.cedula }}</p>
+                        </div>
+                        <div class="ms-auto">
+                            {% if padron_registro %}
+                                {% if padron_registro.situacion == 'habilitado' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">HABILITADO</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2" title="{{ padron_registro.motivo_inhabilitacion }}">INHABILITADO</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2">FUERA DE PADRÓN</span>
+                            {% endif %}
+                        </div>
+                    </div>
 
-<div class="row g-4">
-    {% for asamblea in asambleas %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="badge bg-secondary text-uppercase">{{ asamblea.tipo }}</span>
-                    {% if asamblea.estado == 'programada' %}
-                        <span class="badge bg-primary">Programada</span>
-                    {% elif asamblea.estado == 'en_curso' %}
-                        <span class="badge bg-success">En Curso</span>
-                    {% else %}
-                        <span class="badge bg-dark">Finalizada</span>
+                    {% if padron_registro %}
+                    <div class="card bg-light border-0">
+                        <div class="card-body py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 fw-bold">Gestión de Acreditación</h6>
+                                <p class="text-muted small mb-0">Asamblea: {{ asamblea_actual.tipo|capitalize }} ({{ asamblea_actual.fecha.strftime('%d/%m/%Y') }})</p>
+                            </div>
+                            <div>
+                                {% if ya_acreditado %}
+                                    <div class="btn-group shadow-sm">
+                                        <button class="btn btn-success" disabled>
+                                            <i class="fa-solid fa-check-circle me-1"></i> Acreditado
+                                        </button>
+                                        <a href="{{ url_for('acreditaciones.tarjeta', padron_id=padron_registro.id) }}" target="_blank" class="btn btn-outline-primary px-3">
+                                            <i class="fa-solid fa-id-card me-1"></i> Tarjeta
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <form action="{{ url_for('acreditaciones.acreditar', padron_id=padron_registro.id) }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                                            <i class="fa-solid fa-id-badge me-2"></i> Acreditar Socio
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                     {% endif %}
                 </div>
-                <h5 class="fw-bold mb-1">
-                    {{ asamblea.fecha.strftime('%d/%m/%Y') }} - {{ asamblea.hora_inicio.strftime('%H:%M') if asamblea.hora_inicio else '--:--' }}
-                </h5>
-                <p class="text-muted small mb-3"><i class="fa-solid fa-location-dot me-1"></i>{{ asamblea.lugar or 'Sin definir' }}</p>
+                {% endif %}
                 
-                <a href="{{ url_for('acreditaciones.padron', asamblea_id=asamblea.id) }}" class="btn btn-success w-100 mt-2">
-                    <i class="fa-solid fa-users me-1"></i> Consultar Padrón
-                </a>
+                <div class="alert alert-secondary mt-4 text-start small border-0 bg-light shadow-sm">
+                    <i class="fa-solid fa-circle-info me-2 text-primary"></i> 
+                    <strong>Nota:</strong> Este módulo permite acreditar socios basándose en el padrón generado para la asamblea más reciente. 
+                    <a href="{{ url_for('acreditaciones.padron', asamblea_id=asamblea_actual.id if asamblea_actual else 1) }}" class="text-decoration-none">Ver padrón completo aquí.</a>
+                </div>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="col-12">
-        <div class="alert alert-info border-0 shadow-sm">
-            <i class="fa-solid fa-circle-info me-2"></i> No hay asambleas registradas. Primero debes crear una Asamblea.
-        </div>
-    </div>
-    {% endfor %}
 </div>
 {% endblock %}

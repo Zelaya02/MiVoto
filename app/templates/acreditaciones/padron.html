@@ -73,9 +73,17 @@
                     </td>
                     <td class="text-end">
                         {% if p.id in acreditados_ids %}
-                            <button class="btn btn-sm btn-success" disabled>
-                                <i class="fa-solid fa-check me-1"></i> Acreditado
-                            </button>
+                            <div class="d-flex gap-1 justify-content-end">
+                                <button class="btn btn-sm btn-success" disabled>
+                                    <i class="fa-solid fa-check me-1"></i> Acreditado
+                                </button>
+                                <a href="{{ url_for('acreditaciones.tarjeta', padron_id=p.id) }}"
+                                   target="_blank"
+                                   class="btn btn-sm btn-outline-primary"
+                                   title="Ver / Imprimir Tarjeta de Acreditación">
+                                    <i class="fa-solid fa-id-card me-1"></i> Tarjeta
+                                </a>
+                            </div>
                         {% else %}
                             <form action="{{ url_for('acreditaciones.acreditar', padron_id=p.id) }}" method="POST" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
