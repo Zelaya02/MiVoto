@@ -144,7 +144,7 @@ def estado(id):
         'Tarjeta Visa': estado_socio.mora_visa
     }
     
-    moras_activas = {prod: est for prod, est in moras.items() if est == 'moroso'}
+    moras_activas = {prod: est for prod, est in moras.items() if est.lower().strip() == 'moroso'}
     habilitado = len(moras_activas) == 0
     
     return render_template('socios/estado.html', socio=socio, estado_socio=estado_socio, moras_activas=moras_activas, habilitado=habilitado)

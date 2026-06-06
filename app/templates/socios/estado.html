@@ -67,61 +67,73 @@
                         <tbody>
                             <tr>
                                 <td class="fw-bold">Caja de Ahorro / CC (MoraCC)</td>
-                                <td>
-                                    {% if estado_socio.mora_cc == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_cc|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Solidaridad (MoraSOL)</td>
-                                <td>
-                                    {% if estado_socio.mora_sol == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_sol|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Aporte (MoraAPE)</td>
-                                <td>
-                                    {% if estado_socio.mora_ape == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_ape|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Créditos (MoraCREDITO)</td>
-                                <td>
-                                    {% if estado_socio.mora_credito == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_credito|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Tarjeta Cabal (MoraCABAL)</td>
-                                <td>
-                                    {% if estado_socio.mora_cabal == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_cabal|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Tarjeta Visa (MoraVISA)</td>
-                                <td>
-                                    {% if estado_socio.mora_visa == 'al_dia' %}
-                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
-                                    {% else %}
+                                <td>{% set v = estado_socio.mora_visa|lower %}
+                                    {% if v == 'moroso' %}
                                         <span class="badge bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Moroso</span>
+                                    {% elif v == 'no aplica' %}
+                                        <span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>No Aplica</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Al Día</span>
                                     {% endif %}
                                 </td>
                             </tr>

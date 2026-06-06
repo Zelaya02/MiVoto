@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Socio, Asamblea, PadronAsamblea, Credencial
+from app.models import Socio, Estado, Asamblea, PadronAsamblea, Credencial
 from app.extensions import db
 
 bp = Blueprint('acreditaciones', __name__, url_prefix='/acreditaciones')
@@ -9,9 +9,13 @@ bp = Blueprint('acreditaciones', __name__, url_prefix='/acreditaciones')
 @login_required
 def index():
     socio = None
+    estado_socio = None
+    moras_activas = {}
+    habilitado = None
     padron_registro = None
+    ya_acreditado = False
     asamblea = Asamblea.query.order_by(Asamblea.fecha.desc()).first()
-    
+
     if request.method == 'POST':
         busqueda = request.form.get('busqueda', '').strip()
         if busqueda:
@@ -20,23 +24,44 @@ def index():
                 padron_registro = PadronAsamblea.query.filter_by(asamblea_id=asamblea.id, socio_id=socio.id).first()
                 if not padron_registro:
                     flash(f'El socio {socio.apellidos_nombres} no se encuentra en el padrón de la asamblea actual.', 'warning')
+                    socio = None
+                else:
+                    ya_acreditado = Credencial.query.filter_by(padron_id=padron_registro.id).first() is not None
+                    estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
+                    if not estado_socio:
+                        estado_socio = Estado(
+                            socio_id=socio.id,
+                            mora_cc='al_dia', mora_sol='al_dia',
+                            mora_ape='al_dia', mora_credito='al_dia',
+                            mora_cabal='al_dia', mora_visa='al_dia'
+                        )
+                        db.session.add(estado_socio)
+                        db.session.commit()
+                        db.session.refresh(estado_socio)
+                    moras = {
+                        'Caja de Ahorro / CC': estado_socio.mora_cc,
+                        'Solidaridad': estado_socio.mora_sol,
+                        'Aporte': estado_socio.mora_ape,
+                        'Créditos': estado_socio.mora_credito,
+                        'Tarjeta Cabal': estado_socio.mora_cabal,
+                        'Tarjeta Visa': estado_socio.mora_visa
+                    }
+                    moras_activas = {prod: est for prod, est in moras.items() if est.lower().strip() == 'moroso'}
+                    habilitado = len(moras_activas) == 0
             elif not socio:
                 flash('No se encontró ningún socio con esa cédula o número.', 'danger')
         else:
             flash('Por favor ingresa un dato para la búsqueda.', 'warning')
-            
-    # También obtenemos las asambleas para el selector si fuera necesario, pero por ahora usamos la última
-    asambleas = Asamblea.query.order_by(Asamblea.fecha.desc()).all()
-    
-    # Verificar si ya está acreditado
-    ya_acreditado = False
-    if padron_registro:
-        ya_acreditado = Credencial.query.filter_by(padron_id=padron_registro.id).first() is not None
 
-    return render_template('acreditaciones/index.html', 
-                           asambleas=asambleas, 
+    asambleas = Asamblea.query.order_by(Asamblea.fecha.desc()).all()
+
+    return render_template('acreditaciones/index.html',
+                           asambleas=asambleas,
                            asamblea_actual=asamblea,
-                           socio_resultado=socio,
+                           socio=socio,
+                           estado_socio=estado_socio,
+                           moras_activas=moras_activas,
+                           habilitado=habilitado,
                            padron_registro=padron_registro,
                            ya_acreditado=ya_acreditado)
 

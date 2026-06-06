@@ -1,107 +1,683 @@
 {% extends "base.html" %}
-{% block title %}Panel Principal - Mi Voto 2.0{% endblock %}
+{% block title %}Panel Principal - Mi Voto{% endblock %}
 
 {% block content %}
-<div class="row g-4 mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold text-dark">Bienvenido, {{ current_user.nombre_completo }}</h2>
-        <p class="text-muted">Panel de control de Mi Voto 2.0. Tu rol actual es: <span class="badge bg-info text-dark">{{ current_user.rol.nombre|capitalize }}</span></p>
-    </div>
-</div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center" role="alert">
-            <i class="fa-solid fa-chart-bar fa-lg me-3"></i>
+<!-- ================================================================
+     CABECERA DEL DASHBOARD
+     ================================================================ -->
+<div class="dashboard-header">
+    <div class="header-content">
+        <div class="header-info">
+            <div class="welcome-icon">
+                <i class="fa-solid fa-hand-sparkles"></i>
+            </div>
             <div>
-                Para ver métricas detalladas de acreditación y padrón, accedé a la pestaña
-                <a href="{{ url_for('reportes.index') }}" class="alert-link">Reportes</a>.
+                <h2>Bienvenido, <span class="user-highlight">{{ current_user.nombre_completo }}</span></h2>
+                <p>
+                    <span class="header-badge">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        {{ current_user.rol.nombre|capitalize }}
+                    </span>
+                    <span class="header-date" id="currentDate"></span>
+                </p>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-mini">
+                <span class="stat-number">40</span>
+                <span class="stat-label">Socios</span>
+            </div>
+            <div class="stat-mini">
+                <span class="stat-number">19</span>
+                <span class="stat-label">Al día</span>
+            </div>
+            <div class="stat-mini">
+                <span class="stat-number">7</span>
+                <span class="stat-label">Módulos</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4">
-    <!-- Card Roles -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-user-tie fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Roles</h5>
-                <p class="card-text text-muted small">Administración de roles del sistema.</p>
-                <a href="{{ url_for('roles.index') }}" class="btn btn-outline-secondary mt-2">Ir a Roles</a>
-            </div>
-        </div>
+<!-- ================================================================
+     ALERTA DE REPORTES
+     ================================================================ -->
+<div class="alert-reportes">
+    <div class="alert-icon">
+        <i class="fa-solid fa-chart-simple"></i>
     </div>
-
-    <!-- Card Usuario -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-info bg-opacity-10 text-info rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-user-gear fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Usuario</h5>
-                <p class="card-text text-muted small">Gestión de usuarios del sistema.</p>
-                <a href="{{ url_for('usuarios.index') }}" class="btn btn-outline-info mt-2">Ir a Usuarios</a>
-            </div>
-        </div>
+    <div class="alert-text">
+        <strong>Métricas y Reportes</strong>
+        <span>Visualizá datos detallados de acreditación, padrón y estadísticas de asambleas.</span>
     </div>
-
-    <!-- Card Socio -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-users fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Socio</h5>
-                <p class="card-text text-muted small">Administra los datos personales y estado de los socios.</p>
-                <a href="{{ url_for('socios.index') }}" class="btn btn-outline-primary mt-2">Ir a Socios</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card Estado -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-signal fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Estado</h5>
-                <p class="card-text text-muted small">Revisión de estados y habilitaciones.</p>
-                <a href="{{ url_for('estados.index') }}" class="btn btn-outline-warning mt-2">Ir a Estados</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card Acreditacion -->
-    <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm transition-hover">
-            <div class="card-body text-center p-4">
-                <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
-                    <i class="fa-solid fa-id-badge fa-2x"></i>
-                </div>
-                <h5 class="card-title fw-bold">Acreditación</h5>
-                <p class="card-text text-muted small">Gestión de acreditaciones para las asambleas.</p>
-                <a href="{{ url_for('acreditaciones.index') }}" class="btn btn-outline-success mt-2">Ir a Acreditación</a>
-            </div>
-        </div>
-    </div>
+    <a href="{{ url_for('reportes.index') }}" class="alert-btn">
+        Ver Reportes <i class="fa-solid fa-arrow-right"></i>
+    </a>
 </div>
 
+<!-- ================================================================
+     TARJETAS DE MÓDULOS
+     ================================================================ -->
+<div class="modules-grid">
+
+    <!-- Roles -->
+    <div class="module-card">
+        <div class="module-icon icon-purple">
+            <i class="fa-solid fa-user-tie"></i>
+        </div>
+        <div class="module-info">
+            <h5>Roles</h5>
+            <p>Administración de roles y permisos del sistema.</p>
+        </div>
+        <a href="{{ url_for('roles.index') }}" class="module-btn btn-purple">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Usuarios -->
+    <div class="module-card">
+        <div class="module-icon icon-teal">
+            <i class="fa-solid fa-user-gear"></i>
+        </div>
+        <div class="module-info">
+            <h5>Usuarios</h5>
+            <p>Gestión de usuarios y credenciales de acceso.</p>
+        </div>
+        <a href="{{ url_for('usuarios.index') }}" class="module-btn btn-teal">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Socios -->
+    <div class="module-card">
+        <div class="module-icon icon-blue">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="module-info">
+            <h5>Socios</h5>
+            <p>Administración de datos personales y padrón social.</p>
+        </div>
+        <a href="{{ url_for('socios.index') }}" class="module-btn btn-blue">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Estado -->
+    <div class="module-card">
+        <div class="module-icon icon-gold">
+            <i class="fa-solid fa-signal"></i>
+        </div>
+        <div class="module-info">
+            <h5>Estado</h5>
+            <p>Revisión de morosidad y habilitaciones de socios.</p>
+        </div>
+        <a href="{{ url_for('estados.index') }}" class="module-btn btn-gold">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Acreditación -->
+    <div class="module-card">
+        <div class="module-icon icon-green">
+            <i class="fa-solid fa-id-badge"></i>
+        </div>
+        <div class="module-info">
+            <h5>Acreditación</h5>
+            <p>Gestión de acreditaciones para las asambleas.</p>
+        </div>
+        <a href="{{ url_for('acreditaciones.index') }}" class="module-btn btn-green">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Reportes -->
+    <div class="module-card">
+        <div class="module-icon icon-rose">
+            <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <div class="module-info">
+            <h5>Reportes</h5>
+            <p>Métricas, estadísticas y generación de documentos.</p>
+        </div>
+        <a href="{{ url_for('reportes.index') }}" class="module-btn btn-rose">
+            Acceder <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+
+</div>
+
+<!-- ================================================================
+     ESTILOS DEL DASHBOARD
+     ================================================================ -->
 <style>
-.transition-hover {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-.transition-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
+    /* ========== VARIABLES ========== */
+    :root {
+        --dash-bg: #0a1f14;
+        --dash-card: #0f2d1f;
+        --dash-card-hover: #133a28;
+        --dash-border: rgba(46, 204, 113, 0.12);
+        --dash-text: #e0e8e3;
+        --dash-text-muted: #889e92;
+        --dash-accent: #27ae60;
+    }
+
+    /* ========== CABECERA ========== */
+    .dashboard-header {
+        background: linear-gradient(135deg, #0d2a1c 0%, #103622 100%);
+        border: 1px solid var(--dash-border);
+        border-radius: 20px;
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -40px;
+        right: -30px;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(39, 174, 96, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .welcome-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        background: linear-gradient(135deg, #1e8c4a, #27ae60);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+    }
+
+    .header-info h2 {
+        font-size: 24px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+    }
+
+    .user-highlight {
+        color: #27ae60;
+    }
+
+    .header-info p {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        flex-wrap: wrap;
+    }
+
+    .header-badge {
+        background: rgba(39, 174, 96, 0.15);
+        color: #4ade80;
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        border: 1px solid rgba(39, 174, 96, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .header-date {
+        color: #889e92;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* Mini estadísticas */
+    .header-stats {
+        display: flex;
+        gap: 16px;
+    }
+
+    .stat-mini {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+        padding: 14px 18px;
+        text-align: center;
+        min-width: 70px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-mini:hover {
+        background: rgba(39, 174, 96, 0.08);
+        border-color: rgba(39, 174, 96, 0.2);
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 26px;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: #889e92;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ========== ALERTA DE REPORTES ========== */
+    .alert-reportes {
+        background: linear-gradient(135deg, rgba(30, 140, 74, 0.12), rgba(39, 174, 96, 0.06));
+        border: 1px solid rgba(46, 204, 113, 0.18);
+        border-radius: 16px;
+        padding: 18px 24px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .alert-reportes:hover {
+        border-color: rgba(46, 204, 113, 0.35);
+        box-shadow: 0 4px 20px rgba(46, 204, 113, 0.06);
+    }
+
+    .alert-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        background: linear-gradient(135deg, #1e8c4a, #27ae60);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(30, 140, 74, 0.3);
+    }
+
+    .alert-text {
+        flex: 1;
+    }
+
+    .alert-text strong {
+        display: block;
+        color: #e0e8e3;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .alert-text span {
+        color: #889e92;
+        font-size: 12.5px;
+    }
+
+    .alert-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #1e8c4a;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(30, 140, 74, 0.3);
+    }
+
+    .alert-btn:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        color: #fff;
+    }
+
+    .alert-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .alert-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    /* ========== GRILLA DE MÓDULOS ========== */
+    .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .module-card {
+        background: var(--dash-card);
+        border: 1px solid var(--dash-border);
+        border-radius: 18px;
+        padding: 28px 24px 24px;
+        text-align: center;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .module-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.015), transparent);
+        transition: left 0.6s ease;
+        pointer-events: none;
+    }
+
+    .module-card:hover {
+        transform: translateY(-6px);
+        background: var(--dash-card-hover);
+        border-color: rgba(46, 204, 113, 0.3);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    .module-card:hover::after {
+        left: 100%;
+    }
+
+    /* Íconos */
+    .module-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        transition: transform 0.35s ease;
+    }
+
+    .module-card:hover .module-icon {
+        transform: scale(1.08);
+    }
+
+    .icon-purple {
+        background: linear-gradient(135deg, #4a3b8f, #6c5ce7);
+        color: #d4ccf8;
+        box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
+    }
+
+    .icon-teal {
+        background: linear-gradient(135deg, #0d7377, #14a3a8);
+        color: #b8f0f2;
+        box-shadow: 0 8px 20px rgba(20, 163, 168, 0.25);
+    }
+
+    .icon-blue {
+        background: linear-gradient(135deg, #1a5276, #2980b9);
+        color: #c5e3f6;
+        box-shadow: 0 8px 20px rgba(41, 128, 185, 0.25);
+    }
+
+    .icon-gold {
+        background: linear-gradient(135deg, #8a6d0b, #d4a017);
+        color: #fef3cd;
+        box-shadow: 0 8px 20px rgba(212, 160, 23, 0.25);
+    }
+
+    .icon-green {
+        background: linear-gradient(135deg, #1a7a3a, #27ae60);
+        color: #b9f5d8;
+        box-shadow: 0 8px 20px rgba(39, 174, 96, 0.25);
+    }
+
+    .icon-rose {
+        background: linear-gradient(135deg, #8b2d5b, #c73e7a);
+        color: #f8d0e4;
+        box-shadow: 0 8px 20px rgba(199, 62, 122, 0.25);
+    }
+
+    /* Info */
+    .module-info h5 {
+        color: #e0e8e3;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+
+    .module-info p {
+        color: #889e92;
+        font-size: 12.5px;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Botones */
+    .module-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 12.5px;
+        letter-spacing: 0.3px;
+        border: 1.5px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .module-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .module-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    .btn-purple {
+        color: #b4a7f0;
+        border-color: rgba(108, 92, 231, 0.4);
+    }
+
+    .btn-purple:hover {
+        background: rgba(108, 92, 231, 0.2);
+        color: #fff;
+        border-color: #6c5ce7;
+    }
+
+    .btn-teal {
+        color: #7ee6ea;
+        border-color: rgba(20, 163, 168, 0.4);
+    }
+
+    .btn-teal:hover {
+        background: rgba(20, 163, 168, 0.2);
+        color: #fff;
+        border-color: #14a3a8;
+    }
+
+    .btn-blue {
+        color: #a3d5f7;
+        border-color: rgba(41, 128, 185, 0.4);
+    }
+
+    .btn-blue:hover {
+        background: rgba(41, 128, 185, 0.2);
+        color: #fff;
+        border-color: #2980b9;
+    }
+
+    .btn-gold {
+        color: #fceabb;
+        border-color: rgba(212, 160, 23, 0.4);
+    }
+
+    .btn-gold:hover {
+        background: rgba(212, 160, 23, 0.2);
+        color: #fff;
+        border-color: #d4a017;
+    }
+
+    .btn-green {
+        color: #7bed9f;
+        border-color: rgba(39, 174, 96, 0.4);
+    }
+
+    .btn-green:hover {
+        background: rgba(39, 174, 96, 0.2);
+        color: #fff;
+        border-color: #27ae60;
+    }
+
+    .btn-rose {
+        color: #f5b8d8;
+        border-color: rgba(199, 62, 122, 0.4);
+    }
+
+    .btn-rose:hover {
+        background: rgba(199, 62, 122, 0.2);
+        color: #fff;
+        border-color: #c73e7a;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 992px) {
+        .modules-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-header {
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-stats {
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .stat-mini {
+            padding: 10px 14px;
+        }
+
+        .stat-number {
+            font-size: 22px;
+        }
+
+        .welcome-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            font-size: 18px;
+            border-radius: 14px;
+        }
+
+        .header-info h2 {
+            font-size: 20px;
+        }
+
+        .alert-reportes {
+            flex-direction: column;
+            text-align: center;
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .alert-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modules-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .module-card {
+            padding: 22px 18px 20px;
+            gap: 12px;
+        }
+
+        .module-icon {
+            width: 54px;
+            height: 54px;
+            font-size: 22px;
+            border-radius: 14px;
+        }
+
+        .header-stats {
+            gap: 8px;
+        }
+
+        .stat-mini {
+            padding: 8px 10px;
+            min-width: 60px;
+        }
+
+        .stat-number {
+            font-size: 20px;
+        }
+    }
 </style>
 
+<!-- ================================================================
+     SCRIPT PARA FECHA ACTUAL
+     ================================================================ -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateElement = document.getElementById('currentDate');
+        const now = new Date();
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        dateElement.textContent = now.toLocaleDateString('es-ES', options);
+    });
+</script>
 
 {% endblock %}

@@ -54,7 +54,7 @@ def generar_padron(id):
             'VISA': estado_socio.mora_visa
         }
         
-        moras_activas = [prod for prod, est in moras.items() if est == 'moroso']
+        moras_activas = [prod for prod, est in moras.items() if est.lower().strip() == 'moroso']
         
         situacion = 'habilitado' if len(moras_activas) == 0 else 'inhabilitado'
         motivo = 'Posee mora en ' + ', '.join(moras_activas) if moras_activas else None

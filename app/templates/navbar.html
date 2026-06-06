@@ -1,54 +1,710 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="/">
-        <i class="fa-solid fa-check-to-slot me-2"></i>Mi Voto 2.0
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-      <div class="collapse navbar-collapse" id="navbarNav">
-        {% if current_user.is_authenticated %}
+<nav class="navbar-custom">
+  <div class="navbar-container">
 
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('roles.index') }}"><i class="fa-solid fa-user-tie me-1"></i>Roles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('usuarios.index') }}"><i class="fa-solid fa-user-gear me-1"></i>Usuario</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('socios.index') }}"><i class="fa-solid fa-users me-1"></i>Socio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('estados.index') }}"><i class="fa-solid fa-signal me-1"></i>Estado</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('acreditaciones.index') }}"><i class="fa-solid fa-id-badge me-1"></i>Acreditación</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('reportes.index') }}"><i class="fa-solid fa-chart-bar me-1"></i>Reportes</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fa-solid fa-user-circle me-1"></i>{{ current_user.nombre_completo or current_user.username }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><span class="dropdown-item-text text-muted small">Rol: {{ current_user.rol.nombre|capitalize }}</span></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fa-solid fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
-            </ul>
-          </li>
-        </ul>
-        {% else %}
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('auth.login') }}"><i class="fa-solid fa-sign-in-alt me-1"></i>Iniciar Sesión</a>
-          </li>
-        </ul>
-        {% endif %}
+    <!-- Logo / Marca (solo imagen, sin texto) -->
+    <a class="navbar-brand-custom" href="/">
+      <img src="" alt="Mi Voto" class="brand-logo-img" id="navbarLogo"
+        onerror="this.style.display='none'; document.querySelector('.brand-logo-fallback').style.display='flex';">
+      <div class="brand-logo-fallback" style="display: none;">
+        <i class="fa-solid fa-check-to-slot"></i>
       </div>
+    </a>
+
+    <!-- Toggler para móvil -->
+    <button class="navbar-toggler-custom" type="button" aria-label="Menú de navegación">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Menú colapsable -->
+    <div class="navbar-collapse" id="navbarNav">
+      {% if current_user.is_authenticated %}
+
+      <!-- Links de navegación -->
+      <ul class="navbar-nav-custom">
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('dashboard.index') }}">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('roles.index') }}">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Roles</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('usuarios.index') }}">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>Usuarios</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('socios.index') }}">
+            <i class="fa-solid fa-users"></i>
+            <span>Socios</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('estados.index') }}">
+            <i class="fa-solid fa-signal"></i>
+            <span>Estado</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('acreditaciones.index') }}">
+            <i class="fa-solid fa-id-badge"></i>
+            <span>Acreditación</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('reportes.index') }}">
+            <i class="fa-solid fa-chart-bar"></i>
+            <span>Reportes</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Switch de Modo Oscuro -->
+      <label class="theme-switch" title="Cambiar modo oscuro">
+        <input type="checkbox" class="theme-switch__checkbox" id="themeToggle">
+        <div class="theme-switch__container">
+          <div class="theme-switch__clouds"></div>
+          <div class="theme-switch__stars-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          <div class="theme-switch__circle-container">
+            <div class="theme-switch__sun-moon-container">
+              <div class="theme-switch__moon">
+                <div class="theme-switch__spot"></div>
+                <div class="theme-switch__spot"></div>
+                <div class="theme-switch__spot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </label>
+
+      <!-- Usuario / Perfil -->
+      <div class="navbar-user-section">
+        <div class="user-menu-wrapper">
+          <button class="user-menu-button" id="userMenuButton">
+            <div class="user-avatar">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <span class="user-name">{{ current_user.nombre_completo or current_user.username }}</span>
+            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+          </button>
+
+          <div class="dropdown-menu-custom" id="userDropdown">
+            <div class="dropdown-header-custom">
+              <div class="dropdown-user-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div>
+                <strong>{{ current_user.nombre_completo or current_user.username }}</strong>
+                <span>Rol: {{ current_user.rol.nombre|capitalize }}</span>
+              </div>
+            </div>
+            <hr class="dropdown-divider-custom">
+            <a class="dropdown-item-custom" href="{{ url_for('auth.login') }}">
+              <i class="fa-solid fa-id-card"></i>
+              Mi Perfil
+            </a>
+            <a class="dropdown-item-custom logout" href="{{ url_for('auth.logout') }}">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              Cerrar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {% else %}
+      <!-- Usuario no autenticado -->
+      <div class="navbar-user-section">
+        <a class="btn-login-nav" href="{{ url_for('auth.login') }}">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Iniciar Sesión</span>
+        </a>
+      </div>
+      {% endif %}
     </div>
-  </nav>
+
+  </div>
+</nav>
+
+<!-- ================================================================
+     ESTILOS DEL NAVBAR (REDISTRIBUIDO)
+     ================================================================ -->
+<style>
+  /* ========== VARIABLES ========== */
+  :root {
+    --nav-bg: #0d2a1c;
+    --nav-border: rgba(46, 204, 113, 0.18);
+    --nav-accent: #1e8c4a;
+    --nav-accent-light: #27ae60;
+    --nav-text: #c8d6cf;
+    --nav-text-hover: #ffffff;
+    --nav-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ========== CONTENEDOR PRINCIPAL ========== */
+  .navbar-custom {
+    background: linear-gradient(180deg, rgba(13, 42, 28, 0.99) 0%, rgba(10, 31, 22, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--nav-border);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    box-shadow: var(--nav-shadow);
+  }
+
+  .navbar-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 66px;
+  }
+
+  /* ========== BRAND / LOGO (solo imagen, sin texto) ========== */
+  .navbar-brand-custom {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 28px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .navbar-brand-custom:hover {
+    transform: scale(1.04);
+    filter: drop-shadow(0 6px 12px rgba(46, 204, 113, 0.35));
+  }
+
+  /* Contenedor del logo: más grande y rectangular */
+  .brand-logo-img {
+    height: 44px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .brand-logo-fallback {
+    height: 44px;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-light));
+    border-radius: 10px;
+    font-size: 22px;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(30, 140, 74, 0.35);
+  }
+
+  /* ========== TOGGLER MÓVIL ========== */
+  .navbar-toggler-custom {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .navbar-toggler-custom:hover {
+    border-color: var(--nav-accent-light);
+    background: rgba(46, 204, 113, 0.1);
+  }
+
+  .navbar-toggler-custom span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--nav-text);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-toggler-custom:hover span {
+    background: #fff;
+  }
+
+  .navbar-toggler-custom.open span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+
+  .navbar-toggler-custom.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-toggler-custom.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+
+  /* ========== MENÚ COLAPSABLE ========== */
+  .navbar-collapse {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 20px;
+  }
+
+  /* ========== NAV LINKS (centrados) ========== */
+  .navbar-nav-custom {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link-custom {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    color: var(--nav-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+    background: transparent;
+  }
+
+  .nav-link-custom i {
+    font-size: 15px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .nav-link-custom:hover {
+    color: #fff;
+    background: rgba(46, 204, 113, 0.12);
+  }
+
+  .nav-link-custom:hover i {
+    transform: translateY(-2px);
+    color: var(--nav-accent-light);
+  }
+
+  .nav-link-custom.active {
+    color: #fff;
+    background: rgba(46, 204, 113, 0.18);
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.1);
+  }
+
+  .nav-link-custom.active i {
+    color: var(--nav-accent-light);
+  }
+
+  /* ========== SECCIÓN USUARIO ========== */
+  .navbar-user-section {
+    flex-shrink: 0;
+    margin-left: 28px;
+  }
+
+  .user-menu-wrapper {
+    position: relative;
+  }
+
+  .user-menu-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px 8px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    color: var(--nav-text);
+    cursor: pointer;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .user-menu-button:hover {
+    background: rgba(46, 204, 113, 0.12);
+    border-color: rgba(46, 204, 113, 0.3);
+    color: #fff;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chevron-icon {
+    font-size: 11px;
+    transition: transform 0.3s ease;
+    margin-left: 2px;
+  }
+
+  .user-menu-button.open .chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  /* ========== DROPDOWN ========== */
+  .dropdown-menu-custom {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    background: #0f2d1f;
+    border: 1px solid var(--nav-border);
+    border-radius: 14px;
+    padding: 8px 0;
+    min-width: 250px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    list-style: none;
+    display: none;
+    z-index: 1000;
+  }
+
+  .dropdown-menu-custom.show {
+    display: block;
+    animation: dropdownFadeIn 0.25s ease;
+  }
+
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .dropdown-header-custom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .dropdown-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .dropdown-header-custom strong {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .dropdown-header-custom span {
+    color: var(--nav-text);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .dropdown-divider-custom {
+    border: none;
+    border-top: 1px solid var(--nav-border);
+    margin: 6px 0;
+  }
+
+  .dropdown-item-custom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    color: var(--nav-text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item-custom:hover {
+    background: rgba(46, 204, 113, 0.1);
+    color: #fff;
+  }
+
+  .dropdown-item-custom.logout {
+    color: #f87171;
+  }
+
+  .dropdown-item-custom.logout:hover {
+    background: rgba(248, 113, 113, 0.12);
+    color: #fca5a5;
+  }
+
+  .dropdown-item-custom i {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* ========== BOTÓN LOGIN ========== */
+  .btn-login-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-light));
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(30, 140, 74, 0.4);
+    white-space: nowrap;
+  }
+
+  .btn-login-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.55);
+    color: #fff;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 1150px) {
+    .navbar-nav-custom {
+      gap: 2px;
+    }
+
+    .nav-link-custom {
+      padding: 8px 10px;
+      font-size: 12px;
+      gap: 5px;
+    }
+
+    .nav-link-custom i {
+      font-size: 13px;
+    }
+
+    .navbar-user-section {
+      margin-left: 16px;
+    }
+  }
+
+  @media (max-width: 920px) {
+    .navbar-toggler-custom {
+      display: flex;
+    }
+
+    .navbar-collapse {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding-top: 16px;
+      padding-bottom: 8px;
+    }
+
+    .navbar-collapse.show {
+      display: flex;
+    }
+
+    .navbar-nav-custom {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      gap: 3px;
+    }
+
+    .nav-link-custom {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+      border-radius: 10px;
+    }
+
+    .navbar-user-section {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 10px;
+    }
+
+    .user-menu-button {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    .dropdown-menu-custom {
+      position: static;
+      box-shadow: none;
+      border: none;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      margin-top: 6px;
+    }
+
+    .btn-login-nav {
+      width: 100%;
+      justify-content: center;
+      margin-top: 4px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .navbar-container {
+      padding: 8px 14px;
+      min-height: 56px;
+    }
+
+    .brand-logo-img {
+      height: 36px;
+      max-width: 140px;
+    }
+
+    .brand-logo-fallback {
+      height: 36px;
+      width: 100px;
+      font-size: 18px;
+    }
+
+    .nav-link-custom {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<!-- ================================================================
+     SCRIPT MEJORADO
+     ================================================================ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // ========== CARGA DEL LOGO ==========
+    const logoImg = document.getElementById('navbarLogo');
+    const extensions = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+    let logoFound = false;
+
+    function tryLoadLogo(index) {
+      if (index >= extensions.length || logoFound) return;
+
+      const testImg = new Image();
+      const logoPath = '/static/img/logo.mivoto.' + extensions[index];
+
+      testImg.onload = function () {
+        if (!logoFound) {
+          logoFound = true;
+          logoImg.src = logoPath;
+          logoImg.style.display = 'block';
+          const fallback = document.querySelector('.brand-logo-fallback');
+          if (fallback) fallback.style.display = 'none';
+        }
+      };
+
+      testImg.onerror = function () {
+        tryLoadLogo(index + 1);
+      };
+
+      testImg.src = logoPath;
+    }
+
+    tryLoadLogo(0);
+
+    setTimeout(() => {
+      if (!logoFound) {
+        logoImg.style.display = 'none';
+        const fallback = document.querySelector('.brand-logo-fallback');
+        if (fallback) fallback.style.display = 'flex';
+      }
+    }, 2000);
+
+    // ========== TOGGLER MÓVIL ==========
+    const toggler = document.querySelector('.navbar-toggler-custom');
+    const collapse = document.getElementById('navbarNav');
+
+    if (toggler && collapse) {
+      toggler.addEventListener('click', function () {
+        collapse.classList.toggle('show');
+        toggler.classList.toggle('open');
+      });
+    }
+
+    // ========== DROPDOWN DE USUARIO ==========
+    const userButton = document.getElementById('userMenuButton');
+    const userDropdown = document.getElementById('userDropdown');
+
+    if (userButton && userDropdown) {
+      userButton.addEventListener('click', function (e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle('show');
+        userButton.classList.toggle('open');
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!userButton.contains(e.target) && !userDropdown.contains(e.target)) {
+          userDropdown.classList.remove('show');
+          userButton.classList.remove('open');
+        }
+      });
+    }
+
+    // ========== MARCAR LINK ACTIVO ==========
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link-custom');
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href !== '/' && currentPath.startsWith(href)) {
+        link.classList.add('active');
+      }
+    });
+
+    // ========== CERRAR MENÚ AL HACER CLIC EN UN LINK (MÓVIL) ==========
+    navLinks.forEach(link => {
+      link.addEventListener('click', function () {
+        if (window.innerWidth <= 920) {
+          collapse.classList.remove('show');
+          if (toggler) toggler.classList.remove('open');
+        }
+      });
+    });
+
+  });
+</script>
