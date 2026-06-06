@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Nueva Asamblea - Mi Voto 2.0{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-4"><i class="fa-solid fa-plus-circle text-success me-2"></i>Nueva Asamblea</h4>
+
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo *</label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="ordinaria">Ordinaria</option>
+                            <option value="extraordinaria">Extraordinaria</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha *</label>
+                        <input type="date" name="fecha" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Hora de inicio</label>
+                        <input type="time" name="hora_inicio" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Lugar</label>
+                        <input type="text" name="lugar" class="form-control" placeholder="Salón Municipal...">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Quórum mínimo</label>
+                        <input type="number" name="quorum_minimo" class="form-control" min="1" placeholder="50">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success"><i class="fa-solid fa-check me-1"></i>Crear y generar padrón</button>
+                        <a href="{{ url_for('asambleas.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -145,6 +145,14 @@ class OpcionMocion(db.Model):
     mocion_id = db.Column(db.Integer, db.ForeignKey('mociones.id', ondelete='CASCADE'), nullable=False)
     texto = db.Column(db.String(200), nullable=False)
 
+class LoginLog(db.Model):
+    __tablename__ = 'login_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    nombre_completo = db.Column(db.String(150))
+    ip_address = db.Column(db.String(45))
+    login_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
 class Voto(db.Model):
     __tablename__ = 'votos'
     __table_args__ = (db.UniqueConstraint('socio_id', 'mocion_id', name='uq_voto_socio_mocion'),)

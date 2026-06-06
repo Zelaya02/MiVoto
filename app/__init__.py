@@ -35,4 +35,17 @@ def create_app(config_class=Config):
     app.register_blueprint(acreditaciones_bp)
     app.register_blueprint(reportes_bp)
 
+    @app.template_filter('mask_name')
+    def mask_name_filter(name):
+        if not name:
+            return name
+        partes = name.split()
+        masked = []
+        for p in partes:
+            if len(p) <= 2:
+                masked.append(p + '*' * 2)
+            else:
+                masked.append(p[:2] + '*' * (len(p) - 2))
+        return ' '.join(masked)
+
     return app

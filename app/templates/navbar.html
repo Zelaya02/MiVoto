@@ -2,7 +2,7 @@
   <div class="navbar-container">
 
     <!-- Logo / Marca (solo imagen, sin texto) -->
-    <a class="navbar-brand-custom" href="/">
+    <a class="navbar-brand-custom" href="{{ url_for('dashboard.index') }}">
       <img src="" alt="Mi Voto" class="brand-logo-img" id="navbarLogo"
         onerror="this.style.display='none'; document.querySelector('.brand-logo-fallback').style.display='flex';">
       <div class="brand-logo-fallback" style="display: none;">
@@ -23,12 +23,7 @@
 
       <!-- Links de navegación -->
       <ul class="navbar-nav-custom">
-        <li class="nav-item-custom">
-          <a class="nav-link-custom" href="{{ url_for('dashboard.index') }}">
-            <i class="fa-solid fa-gauge-high"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
+        <!-- Dashboard eliminado, se accede desde el logo -->
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('roles.index') }}">
             <i class="fa-solid fa-user-tie"></i>
@@ -45,6 +40,12 @@
           <a class="nav-link-custom" href="{{ url_for('socios.index') }}">
             <i class="fa-solid fa-users"></i>
             <span>Socios</span>
+          </a>
+        </li>
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('asambleas.index') }}">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Asambleas</span>
           </a>
         </li>
         <li class="nav-item-custom">

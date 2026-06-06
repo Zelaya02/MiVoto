@@ -1,9 +1,10 @@
 from flask import render_template
 from flask_login import login_required
 from app.blueprints.reportes import bp
-from app.models import Socio, Asamblea, PadronAsamblea, Credencial, Mocion, Voto
+from app.models import Socio, Asamblea, PadronAsamblea, Credencial, Mocion, Voto, LoginLog
 from app.extensions import db
 from sqlalchemy import func
+from datetime import datetime, timezone
 
 
 @bp.route('/')
@@ -81,3 +82,10 @@ def index():
         agencias=agencias,
         sexos=sexos,
     )
+
+
+@bp.route('/logs')
+@login_required
+def logs():
+    logs_list = LoginLog.query.order_by(LoginLog.login_at.desc()).limit(200).all()
+    return render_template('reportes/logs.html', logs=logs_list)

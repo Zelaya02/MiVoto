@@ -5,53 +5,68 @@ from app.extensions import db
 
 bp = Blueprint('acreditaciones', __name__, url_prefix='/acreditaciones')
 
-@bp.route('/', methods=['GET', 'POST'])
-@login_required
-def index():
-    socio = None
-    estado_socio = None
+def _buscar_socio(busqueda):
+    socio = estado_socio = None
     moras_activas = {}
     habilitado = None
     padron_registro = None
     ya_acreditado = False
+
+    if not busqueda:
+        return socio, estado_socio, moras_activas, habilitado, padron_registro, ya_acreditado
+
+    asamblea = Asamblea.query.order_by(Asamblea.fecha.desc()).first()
+    socio = Socio.query.filter((Socio.cedula == busqueda) | (Socio.nro_socio == busqueda)).first()
+
+    if not socio:
+        flash('No se encontró ningún socio con esa cédula o número.', 'danger')
+    elif not asamblea:
+        flash('No hay ninguna asamblea registrada para realizar acreditaciones.', 'warning')
+    else:
+        padron_registro = PadronAsamblea.query.filter_by(asamblea_id=asamblea.id, socio_id=socio.id).first()
+        if not padron_registro:
+            flash(f'El socio {socio.apellidos_nombres} no se encuentra en el padrón de la asamblea actual.', 'warning')
+        else:
+            ya_acreditado = Credencial.query.filter_by(padron_id=padron_registro.id).first() is not None
+            estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
+            if not estado_socio:
+                estado_socio = Estado(
+                    socio_id=socio.id,
+                    mora_cc='al_dia', mora_sol='al_dia',
+                    mora_ape='al_dia', mora_credito='al_dia',
+                    mora_cabal='al_dia', mora_visa='al_dia'
+                )
+                db.session.add(estado_socio)
+                db.session.commit()
+                db.session.refresh(estado_socio)
+            moras = {
+                'Caja de Ahorro / CC': estado_socio.mora_cc,
+                'Solidaridad': estado_socio.mora_sol,
+                'Aporte': estado_socio.mora_ape,
+                'Créditos': estado_socio.mora_credito,
+                'Tarjeta Cabal': estado_socio.mora_cabal,
+                'Tarjeta Visa': estado_socio.mora_visa
+            }
+            moras_activas = {prod: est for prod, est in moras.items() if est.lower().strip() == 'moroso'}
+            habilitado = len(moras_activas) == 0
+
+    return socio, estado_socio, moras_activas, habilitado, padron_registro, ya_acreditado
+
+
+@bp.route('/', methods=['GET', 'POST'])
+@login_required
+def index():
     asamblea = Asamblea.query.order_by(Asamblea.fecha.desc()).first()
 
+    busqueda = ''
     if request.method == 'POST':
         busqueda = request.form.get('busqueda', '').strip()
-        if busqueda:
-            socio = Socio.query.filter((Socio.cedula == busqueda) | (Socio.nro_socio == busqueda)).first()
-            if socio and asamblea:
-                padron_registro = PadronAsamblea.query.filter_by(asamblea_id=asamblea.id, socio_id=socio.id).first()
-                if not padron_registro:
-                    flash(f'El socio {socio.apellidos_nombres} no se encuentra en el padrón de la asamblea actual.', 'warning')
-                    socio = None
-                else:
-                    ya_acreditado = Credencial.query.filter_by(padron_id=padron_registro.id).first() is not None
-                    estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
-                    if not estado_socio:
-                        estado_socio = Estado(
-                            socio_id=socio.id,
-                            mora_cc='al_dia', mora_sol='al_dia',
-                            mora_ape='al_dia', mora_credito='al_dia',
-                            mora_cabal='al_dia', mora_visa='al_dia'
-                        )
-                        db.session.add(estado_socio)
-                        db.session.commit()
-                        db.session.refresh(estado_socio)
-                    moras = {
-                        'Caja de Ahorro / CC': estado_socio.mora_cc,
-                        'Solidaridad': estado_socio.mora_sol,
-                        'Aporte': estado_socio.mora_ape,
-                        'Créditos': estado_socio.mora_credito,
-                        'Tarjeta Cabal': estado_socio.mora_cabal,
-                        'Tarjeta Visa': estado_socio.mora_visa
-                    }
-                    moras_activas = {prod: est for prod, est in moras.items() if est.lower().strip() == 'moroso'}
-                    habilitado = len(moras_activas) == 0
-            elif not socio:
-                flash('No se encontró ningún socio con esa cédula o número.', 'danger')
-        else:
+        if not busqueda:
             flash('Por favor ingresa un dato para la búsqueda.', 'warning')
+    elif request.args.get('busqueda'):
+        busqueda = request.args.get('busqueda', '').strip()
+
+    socio, estado_socio, moras_activas, habilitado, padron_registro, ya_acreditado = _buscar_socio(busqueda)
 
     asambleas = Asamblea.query.order_by(Asamblea.fecha.desc()).all()
 
@@ -107,8 +122,9 @@ def acreditar(padron_id):
         db.session.add(nueva_credencial)
         db.session.commit()
         flash(f'Credencial generada y socio {padron_registro.socio.apellidos_nombres} acreditado.', 'success')
-        
-    return redirect(request.referrer or url_for('acreditaciones.index'))
+
+    busqueda = padron_registro.socio.cedula or padron_registro.socio.nro_socio
+    return redirect(url_for('acreditaciones.index', busqueda=busqueda))
 
 
 @bp.route('/tarjeta/<int:padron_id>')
