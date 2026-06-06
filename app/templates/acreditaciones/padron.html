@@ -66,9 +66,9 @@
                     <td>{{ p.socio.apellidos_nombres }}</td>
                     <td>
                         {% if p.situacion == 'habilitado' %}
-                            <span class="badge bg-success">Habilitado</span>
+                            <span class="badge bg-success">Voz y Voto</span>
                         {% else %}
-                            <span class="badge bg-danger" title="{{ p.motivo_inhabilitacion }}">Inhabilitado</span>
+                            <span class="badge bg-warning text-dark" title="{{ p.motivo_inhabilitacion }}">Solo Voz</span>
                         {% endif %}
                     </td>
                     <td class="text-end">

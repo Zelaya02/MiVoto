@@ -38,9 +38,9 @@
                     <td>{{ p.socio.cedula }}</td>
                     <td>
                         {% if p.situacion == 'habilitado' %}
-                            <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Habilitado</span>
+                            <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Voz y Voto</span>
                         {% else %}
-                            <span class="badge bg-danger"><i class="fa-solid fa-times me-1"></i>Inhabilitado</span>
+                            <span class="badge bg-warning text-dark"><i class="fa-solid fa-times me-1"></i>Solo Voz</span>
                         {% endif %}
                     </td>
                     <td class="text-muted small">{{ p.motivo_inhabilitacion or '-' }}</td>
