@@ -33,24 +33,19 @@
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: rgba(20, 22, 30, 0.92);
+            background: rgba(80, 80, 90, 0.90);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 1;
+            visibility: visible;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .page-loader-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .page-loader-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .page-loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
 
         .page-loader-overlay p {
@@ -609,11 +604,11 @@
             function hideLoader() {
                 if (!loader) return;
                 const elapsed = Date.now() - loaderStart;
-                const minShow = 700;
+                const minShow = 1500;
                 if (elapsed < minShow) {
-                    setTimeout(function () { loader.classList.remove('active'); }, minShow - elapsed);
+                    setTimeout(function () { loader.classList.add('hidden'); }, minShow - elapsed);
                 } else {
-                    loader.classList.remove('active');
+                    loader.classList.add('hidden');
                 }
             }
 
@@ -642,7 +637,7 @@
 
                 if (loader) {
                     loaderStart = Date.now();
-                    loader.classList.add('active');
+                    loader.classList.remove('hidden');
                 }
             });
 
@@ -666,7 +661,7 @@
                     }
                 });
             }
-        });
+        })();
     </script>
 
     {% block extra_js %}{% endblock %}
