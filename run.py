@@ -13,7 +13,7 @@ except ImportError:
     OperationalError = Exception
 
 # Load environment variables (.env)
-load_dotenv(override=True)
+load_dotenv(override=False)
 
 
 

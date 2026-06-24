@@ -80,6 +80,37 @@ def seed_db():
             db.session.add(estado_mora)
             db.session.commit()
             
+            print("Creando 15 clientes de ejemplo...")
+            nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro', 'Laura', 'Diego', 'Sofía', 'Miguel', 'Lucía', 'Jorge', 'Elena', 'Raúl', 'Carmen', 'José']
+            apellidos = ['López', 'Martínez', 'García', 'Fernández', 'Rodríguez', 'González', 'Pérez', 'Sánchez', 'Ramírez', 'Torres', 'Flores', 'Díaz', 'Gómez', 'Cruz', 'Ruiz']
+            import random
+            
+            for i in range(15):
+                nuevo_socio = Socio(
+                    cedula=str(2000000 + i),
+                    nro_socio=f'{100 + i:04d}',
+                    nombres=nombres[i],
+                    apellidos=apellidos[i],
+                    trabajo='Varios',
+                    agencia='Central',
+                    situacion='activo'
+                )
+                db.session.add(nuevo_socio)
+                db.session.flush() # Para obtener el ID del socio
+                
+                estado = Estado(
+                    socio_id=nuevo_socio.id,
+                    mora_cc='al_dia' if random.choice([True, False]) else 'moroso',
+                    mora_sol='al_dia',
+                    mora_ape='al_dia',
+                    mora_credito='al_dia',
+                    mora_cabal='al_dia',
+                    mora_visa='al_dia'
+                )
+                db.session.add(estado)
+            db.session.commit()
+
+            
             print("Creando asamblea de prueba...")
             asamblea = Asamblea(
                 tipo='ordinaria',
