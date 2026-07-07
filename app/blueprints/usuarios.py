@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from app.models import Usuario, Rol, AuditLog
 from app.extensions import db, bcrypt
@@ -99,7 +99,21 @@ def editar(id):
             rol_id = request.form.get('rol_id')
             if not rol_id:
                 flash('El rol es obligatorio.', 'danger')
-                return render_template('usuarios/form.html', usuario=usuario, roles=roles)
+    return render_template('usuarios/form.html', usuario=usuario, roles=roles)
+
+
+@bp.route('/<int:id>/reset-password', methods=['POST'])
+@admin_required
+def reset_password(id):
+    usuario = Usuario.query.get_or_404(id)
+    import secrets, string
+    nueva = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(10))
+    usuario.password_hash = bcrypt.generate_password_hash(nueva).decode('utf-8')
+    usuario.actualizado_por = current_user.username
+    db.session.commit()
+    db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=f'Password reseteada por admin'))
+    db.session.commit()
+    return jsonify({'ok': True, 'username': usuario.username, 'nueva_password': nueva})
             usuario.rol_id = rol_id
             usuario.activo = activo
 

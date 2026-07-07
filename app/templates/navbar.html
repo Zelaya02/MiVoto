@@ -3,7 +3,7 @@
 
     <!-- Logo / Marca (solo imagen, sin texto) -->
     <a class="navbar-brand-custom" href="{{ url_for('dashboard.index') }}">
-      <img src="" alt="Mi Voto" class="brand-logo-img" id="navbarLogo"
+      <img src="" alt="Mi Voto" class="brand-logo-img" id="navbarLogo" width="160" height="44"
         onerror="this.style.display='none'; document.querySelector('.brand-logo-fallback').style.display='flex';">
       <div class="brand-logo-fallback" style="display: none;">
         <i class="fa-solid fa-check-to-slot"></i>
@@ -196,6 +196,8 @@
     text-decoration: none;
     flex-shrink: 0;
     margin-right: 28px;
+    width: 160px;
+    height: 44px;
     transition: transform 0.3s ease, filter 0.3s ease;
   }
 
@@ -206,16 +208,15 @@
 
   /* Contenedor del logo: más grande y rectangular */
   .brand-logo-img {
+    width: 160px;
     height: 44px;
-    width: auto;
-    max-width: 180px;
     object-fit: contain;
     display: block;
   }
 
   .brand-logo-fallback {
+    width: 160px;
     height: 44px;
-    width: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,6 +225,7 @@
     font-size: 22px;
     color: #fff;
     box-shadow: 0 6px 16px rgba(30, 140, 74, 0.35);
+    flex-shrink: 0;
   }
 
   /* ========== TOGGLER MÓVIL ========== */
@@ -608,13 +610,13 @@
     }
 
     .brand-logo-img {
+      width: 120px;
       height: 36px;
-      max-width: 140px;
     }
 
     .brand-logo-fallback {
+      width: 120px;
       height: 36px;
-      width: 100px;
       font-size: 18px;
     }
 

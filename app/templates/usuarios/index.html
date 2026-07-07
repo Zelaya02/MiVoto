@@ -39,6 +39,9 @@
                     </td>
                     <td><span class="badge bg-light text-dark">{{ u.actualizado_por }}</span></td>
                     <td class="text-end">
+                        <button class="btn btn-sm btn-outline-warning" title="Resetear contraseña" onclick="resetPassword({{ u.id }}, '{{ u.username }}')">
+                            <i class="fa-solid fa-bell"></i>
+                        </button>
                         <a href="{{ url_for('usuarios.editar', id=u.id) }}" class="btn btn-sm btn-outline-primary" title="Editar Usuario">
                             <i class="fa-solid fa-edit"></i>
                         </a>
@@ -55,4 +58,60 @@
         </table>
     </div>
 </div>
+
+<!-- Modal para mostrar la nueva contraseña -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="fa-solid fa-bell me-2"></i>Contraseña Restablecida</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="mb-1">Nueva contraseña para <strong id="modalUsername"></strong>:</p>
+                <p id="modalPassword" class="display-6 fw-bold text-warning my-3" style="font-family: monospace; letter-spacing: 2px;"></p>
+                <p class="text-muted small">Copiala y enviásela al usuario.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button class="btn btn-warning" onclick="copiarPassword()"><i class="fa-solid fa-copy me-1"></i>Copiar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function resetPassword(userId, username) {
+    const btn = event.target.closest('button');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+    fetch('/usuarios/' + userId + '/reset-password', {
+        method: 'POST',
+        headers: {'X-CSRFToken': '{{ csrf_token() }}'}
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            document.getElementById('modalUsername').textContent = data.username;
+            document.getElementById('modalPassword').textContent = data.nueva_password;
+            new bootstrap.Modal(document.getElementById('passwordModal')).show();
+        }
+    })
+    .catch(() => alert('Error al resetear contraseña'))
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-bell"></i>';
+    });
+}
+
+function copiarPassword() {
+    const pass = document.getElementById('modalPassword').textContent;
+    navigator.clipboard.writeText(pass).then(() => {
+        const btn = document.querySelector('#passwordModal .btn-warning');
+        btn.innerHTML = '<i class="fa-solid fa-check me-1"></i>Copiado';
+        setTimeout(() => btn.innerHTML = '<i class="fa-solid fa-copy me-1"></i>Copiar', 2000);
+    });
+}
+</script>
 {% endblock %}
