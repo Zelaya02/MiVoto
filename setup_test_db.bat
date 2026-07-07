@@ -18,12 +18,8 @@ rem Ensure Flask environment variables
 set FLASK_APP=run.py
 set FLASK_ENV=development
 
-rem Create tables (if migrations are not configured)
-python -c "from app import create_app; app = create_app(); from app.extensions import db; \
-with app.app_context():\r\n    db.create_all()"
-
-rem Populate test data
-python populate_test_data.py
+rem Reset database and populate all initial and test data
+python reset_db.py
 
 if %errorlevel% neq 0 (
     echo One or more steps failed. Check the output above for details.

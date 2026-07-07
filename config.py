@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 def load_environment():
     basedir = os.path.abspath(os.path.dirname(__file__))
     env_path = os.path.join(basedir, '..', '.env')
-    load_dotenv(env_path, override=True)
+    load_dotenv(env_path, override=False)
 
 load_environment()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'), override=True)
+load_dotenv(os.path.join(basedir, '.env'), override=False)
 
 
 class Config:

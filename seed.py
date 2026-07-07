@@ -1,7 +1,7 @@
 import os
 from app import create_app
 from app.extensions import db, bcrypt
-from app.models import Rol, Usuario, Socio, Estado, Asamblea
+from app.models import Rol, Usuario, Socio, Estado, Asamblea, PadronAsamblea
 
 app = create_app()
 
@@ -80,6 +80,37 @@ def seed_db():
             db.session.add(estado_mora)
             db.session.commit()
             
+            print("Creando 15 clientes de ejemplo...")
+            nombres = ['Carlos', 'Ana', 'Luis', 'Marta', 'Pedro', 'Laura', 'Diego', 'Sofía', 'Miguel', 'Lucía', 'Jorge', 'Elena', 'Raúl', 'Carmen', 'José']
+            apellidos = ['López', 'Martínez', 'García', 'Fernández', 'Rodríguez', 'González', 'Pérez', 'Sánchez', 'Ramírez', 'Torres', 'Flores', 'Díaz', 'Gómez', 'Cruz', 'Ruiz']
+            import random
+            
+            for i in range(15):
+                nuevo_socio = Socio(
+                    cedula=str(2000000 + i),
+                    nro_socio=f'{100 + i:04d}',
+                    nombres=nombres[i],
+                    apellidos=apellidos[i],
+                    trabajo='Varios',
+                    agencia='Central',
+                    situacion='activo'
+                )
+                db.session.add(nuevo_socio)
+                db.session.flush() # Para obtener el ID del socio
+                
+                estado = Estado(
+                    socio_id=nuevo_socio.id,
+                    mora_cc='al_dia' if random.choice([True, False]) else 'moroso',
+                    mora_sol='al_dia',
+                    mora_ape='al_dia',
+                    mora_credito='al_dia',
+                    mora_cabal='al_dia',
+                    mora_visa='al_dia'
+                )
+                db.session.add(estado)
+            db.session.commit()
+
+            
             print("Creando asamblea de prueba...")
             asamblea = Asamblea(
                 tipo='ordinaria',
@@ -90,6 +121,30 @@ def seed_db():
             )
             db.session.add(asamblea)
             db.session.commit()
+            db.session.refresh(asamblea)
+            
+            # Generar padrón automáticamente para la asamblea de prueba
+            print("Generando padrón para la asamblea de prueba...")
+            socios_activos = Socio.query.filter_by(situacion='activo').all()
+            for socio in socios_activos:
+                estado_socio = Estado.query.filter_by(socio_id=socio.id).first()
+                if estado_socio:
+                    moras_activas = [
+                        f for f in ['mora_cc', 'mora_sol', 'mora_ape', 'mora_credito', 'mora_cabal', 'mora_visa']
+                        if getattr(estado_socio, f, 'al_dia').lower().strip() == 'moroso'
+                    ]
+                else:
+                    moras_activas = []
+                situacion = 'habilitado' if len(moras_activas) == 0 else 'inhabilitado'
+                motivo = 'Posee mora en ' + ', '.join(moras_activas) if moras_activas else None
+                db.session.add(PadronAsamblea(
+                    socio_id=socio.id,
+                    asamblea_id=asamblea.id,
+                    situacion=situacion,
+                    motivo_inhabilitacion=motivo
+                ))
+            db.session.commit()
+            print(f"Padrón generado con {len(socios_activos)} socios.")
             
             print("Base de datos inicializada correctamente.")
         else:
