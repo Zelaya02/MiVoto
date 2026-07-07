@@ -25,7 +25,7 @@ services:
       - key: MAIL_USERNAME
         value: OSVALDOZELAYA79@GMAIL.COM
       - key: MAIL_PASSWORD
-        value: Zelaya1103@
+        value: "kibt vbdg mktt gfiz"
       - key: MAIL_FROM
         value: OSVALDOZELAYA79@GMAIL.COM
 databases:
