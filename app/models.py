@@ -22,7 +22,7 @@ class Rol(db.Model):
     usuarios = db.relationship('Usuario', backref='rol', lazy=True)
 
     def tiene_permiso(self, modulo):
-        return self.nombre == 'admin' or modulo in (self.permisos or [])
+        return self.nombre.lower().strip() == 'administrador' or modulo in (self.permisos or [])
 
 class Usuario(UserMixin, db.Model):
     __tablename__ = 'usuarios'
@@ -42,10 +42,11 @@ class Usuario(UserMixin, db.Model):
     actualizado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     def tiene_permiso(self, modulo):
-        if self.rol and self.rol.nombre == 'admin':
-            return True
-        if self.rol and self.rol.tiene_permiso(modulo):
-            return True
+        if self.rol:
+            if self.rol.nombre.lower().strip() == 'administrador':
+                return True
+            if self.rol.tiene_permiso(modulo):
+                return True
         return modulo in (self.permisos_extra or [])
 
 class Socio(db.Model):

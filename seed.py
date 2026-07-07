@@ -13,7 +13,7 @@ def seed_db():
         # Verificar si ya hay roles
         if not Rol.query.first():
             print("Creando roles...")
-            modulos_todos = ['dashboard', 'socios', 'asambleas', 'estados', 'acreditaciones', 'reportes', 'votacion']
+            modulos_todos = ['dashboard', 'socios', 'asambleas', 'estados', 'acreditaciones', 'reportes', 'votacion', 'roles', 'usuarios']
             r_admin = Rol(nombre='Administrador', descripcion='Administrador del sistema', permisos=modulos_todos)
             r_operador = Rol(nombre='Socio', descripcion='Socio de la cooperativa', permisos=['dashboard', 'asambleas', 'acreditaciones', 'reportes', 'estados'])
             db.session.add_all([r_admin, r_operador, r_consulta])

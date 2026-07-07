@@ -35,10 +35,6 @@ def create_app(config_class=Config):
     app.register_blueprint(acreditaciones_bp)
     app.register_blueprint(reportes_bp)
 
-    @app.context_processor
-    def inject_user_permissions():
-        return dict(current_user=current_user)
-
     @app.template_filter('mask_name')
     def mask_name_filter(name):
         if not name:
