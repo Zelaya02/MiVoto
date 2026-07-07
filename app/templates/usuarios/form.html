@@ -41,19 +41,29 @@
 
                         <div class="col-md-6">
                             <label for="rol_id" class="form-label fw-semibold">Rol *</label>
-                            <select class="form-select" id="rol_id" name="rol_id" required>
+                            <select class="form-select" id="rol_id" name="rol_id" required {% if usuario and usuario.username == 'admin' %}disabled{% endif %}>
                                 <option value="">Seleccione un rol...</option>
                                 {% for r in roles %}
                                 <option value="{{ r.id }}" {% if usuario and usuario.rol_id == r.id %}selected{% endif %}>{{ r.nombre|capitalize }}</option>
                                 {% endfor %}
                             </select>
+                            {% if usuario and usuario.username == 'admin' %}
+                            <div class="form-text text-warning fw-semibold mt-1">
+                                <i class="fa-solid fa-lock me-1"></i>El rol del administrador no se puede modificar.
+                            </div>
+                            {% endif %}
                         </div>
 
                         {% if usuario %}
                         <div class="col-md-12 mt-3">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="activo" name="activo" value="true" {% if usuario.activo %}checked{% endif %}>
+                                <input class="form-check-input" type="checkbox" id="activo" name="activo" value="true" {% if usuario.activo %}checked{% endif %} {% if usuario.username == 'admin' %}disabled{% endif %}>
                                 <label class="form-check-label" for="activo">Usuario Activo</label>
+                                {% if usuario.username == 'admin' %}
+                                <div class="form-text text-warning fw-semibold mt-1">
+                                    <i class="fa-solid fa-lock me-1"></i>El administrador no se puede desactivar.
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                         {% endif %}

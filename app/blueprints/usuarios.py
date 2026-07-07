@@ -73,11 +73,10 @@ def editar(id):
         nuevo_email = request.form.get('email', '').strip()
         nombre_completo = request.form.get('nombre_completo', '').strip()
         password = request.form.get('password', '')
-        rol_id = request.form.get('rol_id')
         activo = request.form.get('activo') == 'true'
 
-        if not nuevo_username or not nuevo_email or not rol_id:
-            flash('Username, Email y Rol son obligatorios.', 'danger')
+        if not nuevo_username or not nuevo_email:
+            flash('Username y Email son obligatorios.', 'danger')
             return render_template('usuarios/form.html', usuario=usuario, roles=roles)
 
         if Usuario.query.filter(Usuario.username == nuevo_username, Usuario.id != id).first():
@@ -91,9 +90,16 @@ def editar(id):
         usuario.username = nuevo_username
         usuario.email = nuevo_email
         usuario.nombre_completo = nombre_completo
-        usuario.rol_id = rol_id
-        usuario.activo = activo
         usuario.actualizado_por = current_user.username
+
+        # El usuario admin no puede cambiar de rol ni desactivarse
+        if usuario.username != 'admin':
+            rol_id = request.form.get('rol_id')
+            if not rol_id:
+                flash('El rol es obligatorio.', 'danger')
+                return render_template('usuarios/form.html', usuario=usuario, roles=roles)
+            usuario.rol_id = rol_id
+            usuario.activo = activo
 
         if password:
             usuario.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
