@@ -15,11 +15,10 @@
             <thead class="table-light">
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Permisos</th>
                     <th>Creado Por</th>
-                    <th>Fecha Creación</th>
-                    <th>Actualizado Por</th>
-                    <th>Fecha Actualización</th>
+                    <th>Fecha Creaci&oacute;n</th>
                     <th class="text-end">Acciones</th>
                 </tr>
             </thead>
@@ -27,11 +26,20 @@
                 {% for rol in roles %}
                 <tr>
                     <td class="fw-bold text-muted">{{ rol.nombre }}</td>
-                    <td>{{ rol.descripcion or 'Sin descripción' }}</td>
+                    <td>{{ rol.descripcion or 'Sin descripci&oacute;n' }}</td>
+                    <td>
+                        {% if rol.nombre == 'admin' %}
+                            <span class="badge bg-danger">Todos</span>
+                        {% else %}
+                            {% for p in (rol.permisos or []) %}
+                            <span class="badge bg-secondary me-1">{{ p|capitalize }}</span>
+                            {% else %}
+                            <span class="text-muted">Ninguno</span>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
                     <td><span class="badge bg-light text-dark">{{ rol.creado_por }}</span></td>
                     <td>{{ rol.creado_el.strftime('%d/%m/%Y %H:%M') if rol.creado_el else '-' }}</td>
-                    <td><span class="badge bg-light text-dark">{{ rol.actualizado_por }}</span></td>
-                    <td>{{ rol.actualizado_el.strftime('%d/%m/%Y %H:%M') if rol.actualizado_el else '-' }}</td>
                     <td class="text-end">
                         <a href="{{ url_for('roles.editar', id=rol.id) }}" class="btn btn-sm btn-outline-primary" title="Editar Rol">
                             <i class="fa-solid fa-edit"></i> Editar
@@ -40,7 +48,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-4 text-muted">
+                    <td colspan="6" class="text-center py-4 text-muted">
                         No se encontraron roles.
                     </td>
                 </tr>

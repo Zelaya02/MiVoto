@@ -56,6 +56,9 @@ def _buscar_socio(busqueda):
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
+    if not current_user.tiene_permiso('acreditaciones'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     asamblea = Asamblea.query.order_by(Asamblea.fecha.desc()).first()
 
     busqueda = ''

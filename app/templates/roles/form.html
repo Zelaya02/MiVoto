@@ -14,16 +14,34 @@
             <div class="card-body p-4">
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
+
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label for="nombre" class="form-label fw-semibold">Nombre del Rol *</label>
                             <input type="text" class="form-control" id="nombre" name="nombre" value="{{ rol.nombre if rol else '' }}" required>
                         </div>
-                        
+
                         <div class="col-md-12">
-                            <label for="descripcion" class="form-label fw-semibold">Descripción</label>
+                            <label for="descripcion" class="form-label fw-semibold">Descripci&oacute;n</label>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ rol.descripcion if rol else '' }}</textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Permisos del Rol</label>
+                            <p class="text-muted small mb-2">Seleccionar los m&oacute;dulos a los que este rol tendr&aacute; acceso.</p>
+                            <div class="row">
+                                {% for modulo in modulos %}
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="perm_{{ modulo }}" name="permisos" value="{{ modulo }}"
+                                            {% if rol and modulo in (rol.permisos or []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="perm_{{ modulo }}">
+                                            {{ modulo|capitalize }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
 
@@ -36,18 +54,18 @@
                 </form>
             </div>
         </div>
-        
+
         {% if rol %}
         <div class="card shadow-sm border-0 mt-3">
             <div class="card-body bg-light text-muted small rounded">
                 <div class="row">
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Creado por:</strong> {{ rol.creado_por }}</p>
-                        <p class="mb-0"><strong>Fecha Creación:</strong> {{ rol.creado_el.strftime('%d/%m/%Y %H:%M:%S') if rol.creado_el else '-' }}</p>
+                        <p class="mb-0"><strong>Fecha Creaci&oacute;n:</strong> {{ rol.creado_el.strftime('%d/%m/%Y %H:%M:%S') if rol.creado_el else '-' }}</p>
                     </div>
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Actualizado por:</strong> {{ rol.actualizado_por }}</p>
-                        <p class="mb-0"><strong>Fecha Actualización:</strong> {{ rol.actualizado_el.strftime('%d/%m/%Y %H:%M:%S') if rol.actualizado_el else '-' }}</p>
+                        <p class="mb-0"><strong>Fecha Actualizaci&oacute;n:</strong> {{ rol.actualizado_el.strftime('%d/%m/%Y %H:%M:%S') if rol.actualizado_el else '-' }}</p>
                     </div>
                 </div>
             </div>

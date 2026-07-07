@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, flash
-from flask_login import login_required
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, current_user
 from app.models import Socio, Estado
 from app.extensions import db
 
@@ -8,6 +8,9 @@ bp = Blueprint('estados', __name__, url_prefix='/estados')
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
+    if not current_user.tiene_permiso('estados'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     socio = None
     estado_socio = None
     moras_activas = {}

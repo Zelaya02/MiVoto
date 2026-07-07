@@ -1,5 +1,5 @@
-from flask import render_template
-from flask_login import login_required
+from flask import render_template, redirect, url_for, flash
+from flask_login import login_required, current_user
 from app.blueprints.reportes import bp
 from app.models import Socio, Asamblea, PadronAsamblea, Credencial, Mocion, Voto, LoginLog
 from app.extensions import db
@@ -10,6 +10,9 @@ from datetime import datetime, timezone
 @bp.route('/')
 @login_required
 def index():
+    if not current_user.tiene_permiso('reportes'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     # ── KPIs generales ──────────────────────────────────────────
     total_socios = Socio.query.count()
     socios_activos = Socio.query.filter_by(situacion='activo').count()
@@ -87,5 +90,8 @@ def index():
 @bp.route('/logs')
 @login_required
 def logs():
+    if not current_user.tiene_permiso('reportes'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     logs_list = LoginLog.query.order_by(LoginLog.login_at.desc()).limit(200).all()
     return render_template('reportes/logs.html', logs=logs_list)

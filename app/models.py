@@ -2,11 +2,17 @@ from datetime import datetime, timezone
 from flask_login import UserMixin
 from app.extensions import db
 
+MODULOS = [
+    'dashboard', 'socios', 'asambleas', 'estados',
+    'acreditaciones', 'reportes', 'votacion'
+]
+
 class Rol(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), unique=True, nullable=False)
     descripcion = db.Column(db.String(200))
+    permisos = db.Column(db.JSON, default=list)
     row_version = db.Column(db.Integer, default=1)
     creado_por = db.Column(db.String(100), default='sistema')
     creado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
@@ -14,6 +20,9 @@ class Rol(db.Model):
     actualizado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     usuarios = db.relationship('Usuario', backref='rol', lazy=True)
+
+    def tiene_permiso(self, modulo):
+        return self.nombre == 'admin' or modulo in (self.permisos or [])
 
 class Usuario(UserMixin, db.Model):
     __tablename__ = 'usuarios'
@@ -25,11 +34,19 @@ class Usuario(UserMixin, db.Model):
     nombre_completo = db.Column(db.String(150))
     activo = db.Column(db.Boolean, default=True)
     rol_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    permisos_extra = db.Column(db.JSON, default=list)
     row_version = db.Column(db.Integer, default=1)
     creado_por = db.Column(db.String(100), default='sistema')
     creado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     actualizado_por = db.Column(db.String(100), default='sistema')
     actualizado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    def tiene_permiso(self, modulo):
+        if self.rol and self.rol.nombre == 'admin':
+            return True
+        if self.rol and self.rol.tiene_permiso(modulo):
+            return True
+        return modulo in (self.permisos_extra or [])
 
 class Socio(db.Model):
     __tablename__ = 'socios'

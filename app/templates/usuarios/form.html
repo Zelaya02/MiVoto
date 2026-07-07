@@ -14,15 +14,15 @@
             <div class="card-body p-4">
                 <form method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="username" class="form-label fw-semibold">Nombre de Usuario *</label>
                             <input type="text" class="form-control" id="username" name="username" value="{{ usuario.username if usuario else '' }}" required>
                         </div>
-                        
+
                         <div class="col-md-6">
-                            <label for="email" class="form-label fw-semibold">Correo Electrónico *</label>
+                            <label for="email" class="form-label fw-semibold">Correo Electr&oacute;nico *</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{ usuario.email if usuario else '' }}" required>
                         </div>
 
@@ -32,10 +32,10 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="password" class="form-label fw-semibold">Contraseña {% if not usuario %}*{% endif %}</label>
+                            <label for="password" class="form-label fw-semibold">Contrase&ntilde;a {% if not usuario %}*{% endif %}</label>
                             <input type="password" class="form-control" id="password" name="password" {% if not usuario %}required{% endif %}>
                             {% if usuario %}
-                            <div class="form-text mt-1">Dejar en blanco para mantener la contraseña actual.</div>
+                            <div class="form-text mt-1">Dejar en blanco para mantener la contrase&ntilde;a actual.</div>
                             {% endif %}
                         </div>
 
@@ -47,6 +47,24 @@
                                 <option value="{{ r.id }}" {% if usuario and usuario.rol_id == r.id %}selected{% endif %}>{{ r.nombre|capitalize }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Permisos adicionales</label>
+                            <p class="text-muted small mb-2">Marcar m&oacute;dulos extras a los que este usuario tendr&aacute; acceso adem&aacute;s de los de su rol.</p>
+                            <div class="row">
+                                {% for modulo in modulos %}
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="pext_{{ modulo }}" name="permisos_extra" value="{{ modulo }}"
+                                            {% if usuario and modulo in (usuario.permisos_extra or []) %}checked{% endif %}>
+                                        <label class="form-check-label" for="pext_{{ modulo }}">
+                                            {{ modulo|capitalize }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
 
                         {% if usuario %}
@@ -68,18 +86,18 @@
                 </form>
             </div>
         </div>
-        
+
         {% if usuario %}
         <div class="card shadow-sm border-0 mt-3">
             <div class="card-body bg-light text-muted small rounded">
                 <div class="row">
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Creado por:</strong> {{ usuario.creado_por }}</p>
-                        <p class="mb-0"><strong>Fecha Creación:</strong> {{ usuario.creado_el.strftime('%d/%m/%Y %H:%M:%S') if usuario.creado_el else '-' }}</p>
+                        <p class="mb-0"><strong>Fecha Creaci&oacute;n:</strong> {{ usuario.creado_el.strftime('%d/%m/%Y %H:%M:%S') if usuario.creado_el else '-' }}</p>
                     </div>
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Actualizado por:</strong> {{ usuario.actualizado_por }}</p>
-                        <p class="mb-0"><strong>Fecha Actualización:</strong> {{ usuario.actualizado_el.strftime('%d/%m/%Y %H:%M:%S') if usuario.actualizado_el else '-' }}</p>
+                        <p class="mb-0"><strong>Fecha Actualizaci&oacute;n:</strong> {{ usuario.actualizado_el.strftime('%d/%m/%Y %H:%M:%S') if usuario.actualizado_el else '-' }}</p>
                     </div>
                 </div>
             </div>

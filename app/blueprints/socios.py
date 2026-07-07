@@ -8,6 +8,9 @@ bp = Blueprint('socios', __name__, url_prefix='/socios')
 @bp.route('/')
 @login_required
 def index():
+    if not current_user.tiene_permiso('socios'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     q = request.args.get('q', '')
     if q:
         socios = Socio.query.filter(

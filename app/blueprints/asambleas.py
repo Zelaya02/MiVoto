@@ -52,6 +52,9 @@ def _generar_padron(asamblea):
 @bp.route('/')
 @login_required
 def index():
+    if not current_user.tiene_permiso('asambleas'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
     asambleas = Asamblea.query.order_by(Asamblea.fecha.desc()).all()
     return render_template('asambleas/index.html', asambleas=asambleas)
 

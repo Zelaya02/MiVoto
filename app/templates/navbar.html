@@ -21,51 +21,64 @@
     <div class="navbar-collapse" id="navbarNav">
       {% if current_user.is_authenticated %}
 
-      <!-- Links de navegación -->
+      <!-- Links de navegaci&oacute;n -->
       <ul class="navbar-nav-custom">
-        <!-- Dashboard eliminado, se accede desde el logo -->
-        <li class="nav-item-custom">
-          <a class="nav-link-custom" href="{{ url_for('roles.index') }}">
-            <i class="fa-solid fa-user-tie"></i>
-            <span>Roles</span>
-          </a>
-        </li>
-        <li class="nav-item-custom">
-          <a class="nav-link-custom" href="{{ url_for('usuarios.index') }}">
-            <i class="fa-solid fa-user-gear"></i>
-            <span>Usuarios</span>
-          </a>
-        </li>
+        {% if current_user.is_authenticated and current_user.tiene_permiso('socios') %}
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('socios.index') }}">
             <i class="fa-solid fa-users"></i>
             <span>Socios</span>
           </a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('asambleas') %}
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('asambleas.index') }}">
             <i class="fa-solid fa-calendar-check"></i>
             <span>Asambleas</span>
           </a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('estados') %}
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('estados.index') }}">
             <i class="fa-solid fa-signal"></i>
             <span>Estado</span>
           </a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('acreditaciones') %}
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('acreditaciones.index') }}">
             <i class="fa-solid fa-id-badge"></i>
-            <span>Acreditación</span>
+            <span>Acreditaci&oacute;n</span>
           </a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('reportes') %}
         <li class="nav-item-custom">
           <a class="nav-link-custom" href="{{ url_for('reportes.index') }}">
             <i class="fa-solid fa-chart-bar"></i>
             <span>Reportes</span>
           </a>
         </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('roles') %}
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('roles.index') }}">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Roles</span>
+          </a>
+        </li>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.tiene_permiso('usuarios') %}
+        <li class="nav-item-custom">
+          <a class="nav-link-custom" href="{{ url_for('usuarios.index') }}">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>Usuarios</span>
+          </a>
+        </li>
+        {% endif %}
       </ul>
 
       <!-- Switch de Modo Oscuro -->
