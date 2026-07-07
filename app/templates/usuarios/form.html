@@ -49,24 +49,6 @@
                             </select>
                         </div>
 
-                        <div class="col-md-12">
-                            <label class="form-label fw-semibold">Permisos adicionales</label>
-                            <p class="text-muted small mb-2">Marcar m&oacute;dulos extras a los que este usuario tendr&aacute; acceso adem&aacute;s de los de su rol.</p>
-                            <div class="row">
-                                {% for modulo in modulos %}
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="pext_{{ modulo }}" name="permisos_extra" value="{{ modulo }}"
-                                            {% if usuario and modulo in (usuario.permisos_extra or []) %}checked{% endif %}>
-                                        <label class="form-check-label" for="pext_{{ modulo }}">
-                                            {{ modulo|capitalize }}
-                                        </label>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
                         {% if usuario %}
                         <div class="col-md-12 mt-3">
                             <div class="form-check form-switch">
