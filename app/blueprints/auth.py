@@ -68,6 +68,8 @@ def olvide_contrasena():
         user.password_hash = bcrypt.generate_password_hash(nueva_pass).decode('utf-8')
         db.session.commit()
 
+        current_app.logger.info(f'Nueva password generada para {user.username}: {nueva_pass}')
+
         asunto = 'Mi Voto - Nueva contraseña'
         cuerpo = f'''
         <h2>Recuperación de contraseña</h2>

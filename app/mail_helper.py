@@ -1,4 +1,5 @@
 import smtplib
+import socket
 from email.message import EmailMessage
 from flask import current_app
 
@@ -22,11 +23,17 @@ def enviar_email(destinatario, asunto, cuerpo_html):
     msg.set_content(cuerpo_html, subtype='html')
 
     try:
-        with smtplib.SMTP(servidor, puerto) as smtp:
+        with smtplib.SMTP(servidor, puerto, timeout=10) as smtp:
             smtp.starttls() if use_tls else None
             smtp.login(usuario, password)
             smtp.send_message(msg)
         return True
+    except socket.timeout:
+        current_app.logger.error(f'Timeout conectando a SMTP {servidor}:{puerto}')
+        return False
+    except smtplib.SMTPAuthenticationError:
+        current_app.logger.error('Error de autenticacion SMTP — verifica MAIL_USERNAME/MAIL_PASSWORD')
+        return False
     except Exception as e:
         current_app.logger.error(f'Error enviando email a {destinatario}: {e}')
         return False
