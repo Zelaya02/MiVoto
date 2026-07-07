@@ -99,6 +99,19 @@ def editar(id):
             rol_id = request.form.get('rol_id')
             if not rol_id:
                 flash('El rol es obligatorio.', 'danger')
+                return render_template('usuarios/form.html', usuario=usuario, roles=roles)
+            usuario.rol_id = rol_id
+            usuario.activo = activo
+
+        if password:
+            usuario.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=usuario.nombre_completo or usuario.username))
+        db.session.commit()
+        flash('Usuario actualizado correctamente.', 'success')
+        return redirect(url_for('usuarios.index'))
+
     return render_template('usuarios/form.html', usuario=usuario, roles=roles)
 
 
@@ -114,16 +127,3 @@ def reset_password(id):
     db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=f'Password reseteada por admin'))
     db.session.commit()
     return jsonify({'ok': True, 'username': usuario.username, 'nueva_password': nueva})
-            usuario.rol_id = rol_id
-            usuario.activo = activo
-
-        if password:
-            usuario.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        db.session.commit()
-        db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=usuario.nombre_completo or usuario.username))
-        db.session.commit()
-        flash('Usuario actualizado correctamente.', 'success')
-        return redirect(url_for('usuarios.index'))
-
-    return render_template('usuarios/form.html', usuario=usuario, roles=roles)
