@@ -35,6 +35,40 @@ def seed_db():
             db.session.rollback()
             print(f'Migración (usuarios): {e}')
 
+        # Migración: crear tabla audit_logs si no existe
+        try:
+            inspector = sa.inspect(db.engine)
+            if 'audit_logs' not in inspector.get_table_names():
+                if 'postgresql' in str(db.engine.url):
+                    db.session.execute(sa.text('''
+                        CREATE TABLE audit_logs (
+                            id SERIAL PRIMARY KEY,
+                            usuario VARCHAR(50) NOT NULL,
+                            accion VARCHAR(20) NOT NULL,
+                            tipo_objeto VARCHAR(30) NOT NULL,
+                            objeto_id VARCHAR(20),
+                            detalle TEXT,
+                            creado_el TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    '''))
+                else:
+                    db.session.execute(sa.text('''
+                        CREATE TABLE audit_logs (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            usuario VARCHAR(50) NOT NULL,
+                            accion VARCHAR(20) NOT NULL,
+                            tipo_objeto VARCHAR(30) NOT NULL,
+                            objeto_id VARCHAR(20),
+                            detalle TEXT,
+                            creado_el TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    '''))
+                db.session.commit()
+                print('Migración: tabla audit_logs creada')
+        except Exception as e:
+            db.session.rollback()
+            print(f'Migración (audit_logs): {e}')
+
         # Asignar permisos por defecto a roles existentes que no tengan
         for r in Rol.query.all():
             if not r.permisos:

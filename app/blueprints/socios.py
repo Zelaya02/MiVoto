@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Socio, Estado
+from app.models import Socio, Estado, AuditLog
 from app.extensions import db
 
 bp = Blueprint('socios', __name__, url_prefix='/socios')
@@ -68,6 +68,8 @@ def nuevo():
         socio.actualizado_por = current_user.username
         db.session.add(socio)
         db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='crear', tipo_objeto='Socio', objeto_id=socio.nro_socio, detalle=f'{socio.apellidos}, {socio.nombres}'))
+        db.session.commit()
         flash('Socio creado exitosamente.', 'success')
         return redirect(url_for('socios.index'))
 
@@ -109,6 +111,8 @@ def editar(id):
         socio.agencia          = agencia
         socio.situacion        = situacion
         socio.actualizado_por  = current_user.username
+        db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Socio', objeto_id=socio.nro_socio, detalle=f'{socio.apellidos}, {socio.nombres}'))
         db.session.commit()
         flash('Socio actualizado correctamente.', 'success')
         return redirect(url_for('socios.index'))

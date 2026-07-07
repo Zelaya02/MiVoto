@@ -171,6 +171,16 @@ class LoginLog(db.Model):
     ip_address = db.Column(db.String(45))
     login_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+class AuditLog(db.Model):
+    __tablename__ = 'audit_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    usuario = db.Column(db.String(50), nullable=False)
+    accion = db.Column(db.String(20), nullable=False)
+    tipo_objeto = db.Column(db.String(30), nullable=False)
+    objeto_id = db.Column(db.String(20))
+    detalle = db.Column(db.Text)
+    creado_el = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
 class Voto(db.Model):
     __tablename__ = 'votos'
     __table_args__ = (db.UniqueConstraint('socio_id', 'mocion_id', name='uq_voto_socio_mocion'),)

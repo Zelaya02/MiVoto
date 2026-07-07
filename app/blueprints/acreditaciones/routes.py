@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Socio, Estado, Asamblea, PadronAsamblea, Credencial
+from app.models import Socio, Estado, Asamblea, PadronAsamblea, Credencial, AuditLog
 from app.extensions import db
 
 bp = Blueprint('acreditaciones', __name__, url_prefix='/acreditaciones')
@@ -123,6 +123,8 @@ def acreditar(padron_id):
         nueva_credencial.creado_por = current_user.username
         nueva_credencial.actualizado_por = current_user.username
         db.session.add(nueva_credencial)
+        db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='autorizar', tipo_objeto='Credencial', objeto_id=padron_registro.socio.nro_socio, detalle=f'{padron_registro.socio.apellidos_nombres}'))
         db.session.commit()
         flash(f'Credencial generada y socio {padron_registro.socio.apellidos_nombres} acreditado.', 'success')
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Usuario, Rol
+from app.models import Usuario, Rol, AuditLog
 from app.extensions import db, bcrypt
 
 bp = Blueprint('usuarios', __name__, url_prefix='/usuarios')
@@ -57,6 +57,8 @@ def nuevo():
         usuario.actualizado_por = current_user.username
         db.session.add(usuario)
         db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='crear', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=nombre_completo or username))
+        db.session.commit()
         flash('Usuario creado exitosamente.', 'success')
         return redirect(url_for('usuarios.index'))
 
@@ -104,6 +106,8 @@ def editar(id):
         if password:
             usuario.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
+        db.session.commit()
+        db.session.add(AuditLog(usuario=current_user.username, accion='editar', tipo_objeto='Usuario', objeto_id=usuario.username, detalle=usuario.nombre_completo or usuario.username))
         db.session.commit()
         flash('Usuario actualizado correctamente.', 'success')
         return redirect(url_for('usuarios.index'))

@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app.blueprints.reportes import bp
-from app.models import Socio, Asamblea, PadronAsamblea, Credencial, Mocion, Voto, LoginLog
+from app.models import Socio, Asamblea, PadronAsamblea, Credencial, Mocion, Voto, LoginLog, AuditLog
 from app.extensions import db
 from sqlalchemy import func
 from datetime import datetime, timezone
@@ -95,3 +95,13 @@ def logs():
         return redirect(url_for('dashboard.index'))
     logs_list = LoginLog.query.order_by(LoginLog.login_at.desc()).limit(200).all()
     return render_template('reportes/logs.html', logs=logs_list)
+
+
+@bp.route('/auditoria')
+@login_required
+def auditoria():
+    if not current_user.tiene_permiso('reportes'):
+        flash('No tienes permisos para acceder a esta secci&oacute;n.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    logs = AuditLog.query.order_by(AuditLog.creado_el.desc()).limit(200).all()
+    return render_template('reportes/auditoria.html', logs=logs)
