@@ -12,16 +12,28 @@ def seed_db():
         db.create_all()
 
         # Migración: agregar columnas faltantes en producción
-        inspector = sa.inspect(db.engine)
-        cols_roles = [c['name'] for c in inspector.get_columns('roles')]
-        if 'permisos' not in cols_roles:
-            db.session.execute(sa.text('ALTER TABLE roles ADD COLUMN permisos TEXT DEFAULT "[]"'))
-            print('Migración: columna permisos agregada a roles')
-        cols_usuarios = [c['name'] for c in inspector.get_columns('usuarios')]
-        if 'permisos_extra' not in cols_usuarios:
-            db.session.execute(sa.text('ALTER TABLE usuarios ADD COLUMN permisos_extra TEXT DEFAULT "[]"'))
-            print('Migración: columna permisos_extra agregada a usuarios')
-        db.session.commit()
+        try:
+            inspector = sa.inspect(db.engine)
+            cols_roles = [c['name'] for c in inspector.get_columns('roles')]
+            if 'permisos' not in cols_roles:
+                tipo = 'JSON' if 'postgresql' in str(db.engine.url) else 'TEXT'
+                db.session.execute(sa.text(f"ALTER TABLE roles ADD COLUMN permisos {tipo} DEFAULT '[]'"))
+                db.session.commit()
+                print('Migración: columna permisos agregada a roles')
+        except Exception as e:
+            db.session.rollback()
+            print(f'Migración (roles): {e}')
+        try:
+            inspector = sa.inspect(db.engine)
+            cols_usuarios = [c['name'] for c in inspector.get_columns('usuarios')]
+            if 'permisos_extra' not in cols_usuarios:
+                tipo = 'JSON' if 'postgresql' in str(db.engine.url) else 'TEXT'
+                db.session.execute(sa.text(f"ALTER TABLE usuarios ADD COLUMN permisos_extra {tipo} DEFAULT '[]'"))
+                db.session.commit()
+                print('Migración: columna permisos_extra agregada a usuarios')
+        except Exception as e:
+            db.session.rollback()
+            print(f'Migración (usuarios): {e}')
 
         # Asignar permisos por defecto a roles existentes que no tengan
         for r in Rol.query.all():
