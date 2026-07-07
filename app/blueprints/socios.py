@@ -29,7 +29,6 @@ def index():
 def nuevo():
     if request.method == 'POST':
         cedula        = request.form.get('cedula', '').strip()
-        nro_socio     = request.form.get('nro_socio', '').strip()
         nombres       = request.form.get('nombres', '').strip()
         apellidos     = request.form.get('apellidos', '').strip()
         fecha_nac     = request.form.get('fecha_nacimiento') or None
@@ -39,21 +38,24 @@ def nuevo():
         agencia       = request.form.get('agencia', '').strip()
         situacion     = request.form.get('situacion', 'activo').strip()
 
-        if not cedula or not nro_socio or not nombres or not apellidos:
-            flash('Los campos Cédula, Nro. Socio, Nombres y Apellidos son obligatorios.', 'danger')
+        if not cedula or not nombres or not apellidos:
+            flash('Los campos Cédula, Nombres y Apellidos son obligatorios.', 'danger')
             return render_template('socios/form.html', socio=None)
 
         if Socio.query.filter_by(cedula=cedula).first():
             flash('Ya existe un socio con esa cédula.', 'danger')
             return render_template('socios/form.html', socio=None)
 
-        if Socio.query.filter_by(nro_socio=nro_socio).first():
-            flash('Ya existe un socio con ese número de socio.', 'danger')
-            return render_template('socios/form.html', socio=None)
+        # Generar nro_socio auto-incremental
+        ultimo = Socio.query.order_by(Socio.nro_socio.desc()).first()
+        if ultimo and ultimo.nro_socio and ultimo.nro_socio.isdigit():
+            nuevo_nro = str(int(ultimo.nro_socio) + 1).zfill(len(ultimo.nro_socio))
+        else:
+            nuevo_nro = '0001'
 
         socio = Socio()
+        socio.nro_socio = nuevo_nro
         socio.cedula = cedula
-        socio.nro_socio = nro_socio
         socio.nombres = nombres
         socio.apellidos = apellidos
         socio.fecha_nacimiento = fecha_nac
@@ -79,7 +81,6 @@ def editar(id):
 
     if request.method == 'POST':
         nueva_cedula    = request.form.get('cedula', '').strip()
-        nuevo_nro       = request.form.get('nro_socio', '').strip()
         nombres         = request.form.get('nombres', '').strip()
         apellidos       = request.form.get('apellidos', '').strip()
         fecha_nac       = request.form.get('fecha_nacimiento') or None
@@ -89,8 +90,8 @@ def editar(id):
         agencia         = request.form.get('agencia', '').strip()
         situacion       = request.form.get('situacion', 'activo').strip()
 
-        if not nueva_cedula or not nuevo_nro or not nombres or not apellidos:
-            flash('Los campos Cédula, Nro. Socio, Nombres y Apellidos son obligatorios.', 'danger')
+        if not nueva_cedula or not nombres or not apellidos:
+            flash('Los campos Cédula, Nombres y Apellidos son obligatorios.', 'danger')
             return render_template('socios/form.html', socio=socio)
 
         duplicado_cedula = Socio.query.filter(Socio.cedula == nueva_cedula, Socio.id != id).first()
@@ -98,13 +99,7 @@ def editar(id):
             flash('Ya existe otro socio con esa cédula.', 'danger')
             return render_template('socios/form.html', socio=socio)
 
-        duplicado_nro = Socio.query.filter(Socio.nro_socio == nuevo_nro, Socio.id != id).first()
-        if duplicado_nro:
-            flash('Ya existe otro socio con ese número de socio.', 'danger')
-            return render_template('socios/form.html', socio=socio)
-
         socio.cedula           = nueva_cedula
-        socio.nro_socio        = nuevo_nro
         socio.nombres          = nombres
         socio.apellidos        = apellidos
         socio.fecha_nacimiento = fecha_nac
