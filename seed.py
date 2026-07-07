@@ -1,4 +1,5 @@
 import os
+import sqlalchemy as sa
 from app import create_app
 from app.extensions import db, bcrypt
 from app.models import Rol, Usuario, Socio, Estado, Asamblea, PadronAsamblea
@@ -9,6 +10,31 @@ def seed_db():
     with app.app_context():
         # Crear todas las tablas
         db.create_all()
+
+        # Migración: agregar columnas faltantes en producción
+        inspector = sa.inspect(db.engine)
+        cols_roles = [c['name'] for c in inspector.get_columns('roles')]
+        if 'permisos' not in cols_roles:
+            db.session.execute(sa.text('ALTER TABLE roles ADD COLUMN permisos TEXT DEFAULT "[]"'))
+            print('Migración: columna permisos agregada a roles')
+        cols_usuarios = [c['name'] for c in inspector.get_columns('usuarios')]
+        if 'permisos_extra' not in cols_usuarios:
+            db.session.execute(sa.text('ALTER TABLE usuarios ADD COLUMN permisos_extra TEXT DEFAULT "[]"'))
+            print('Migración: columna permisos_extra agregada a usuarios')
+        db.session.commit()
+
+        # Asignar permisos por defecto a roles existentes que no tengan
+        for r in Rol.query.all():
+            if not r.permisos:
+                nombre_lower = r.nombre.lower().strip()
+                if nombre_lower in ('admin', 'administrador'):
+                    r.permisos = ['dashboard', 'socios', 'asambleas', 'estados', 'acreditaciones', 'reportes', 'votacion', 'roles', 'usuarios']
+                elif nombre_lower in ('socio', 'operador', 'operador_lectura'):
+                    r.permisos = ['dashboard', 'asambleas', 'acreditaciones', 'reportes', 'estados']
+                else:
+                    r.permisos = ['dashboard']
+                print(f'Permisos asignados a rol {r.nombre}: {r.permisos}')
+        db.session.commit()
         
         # Verificar si ya hay roles
         if not Rol.query.first():
@@ -16,7 +42,7 @@ def seed_db():
             modulos_todos = ['dashboard', 'socios', 'asambleas', 'estados', 'acreditaciones', 'reportes', 'votacion', 'roles', 'usuarios']
             r_admin = Rol(nombre='Administrador', descripcion='Administrador del sistema', permisos=modulos_todos)
             r_operador = Rol(nombre='Socio', descripcion='Socio de la cooperativa', permisos=['dashboard', 'asambleas', 'acreditaciones', 'reportes', 'estados'])
-            db.session.add_all([r_admin, r_operador, r_consulta])
+            db.session.add_all([r_admin, r_operador])
             db.session.commit()
             
             print("Creando usuario administrador...")
